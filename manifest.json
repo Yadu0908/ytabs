@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "YTab",
+  "version": "1.0.0",
+  "description": "A minimal, developer-focused new tab page.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "storage",
+    "bookmarks"
+  ],
+  "icons": {
+    "128": "icons/iocns-128.png"
+  },
+  "offline_enabled": true
+}

@@ -1,0 +1,221 @@
+/* layout.css */
+
+.app-container {
+    width: 100%;
+    max-width: 90vw;
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* --- SEARCH --- */
+.search-section { position: relative; z-index: 100; }
+.search-bar {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.search-bar:focus-within { border-color: var(--accent-color); }
+.search-bar input {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    width: 100%;
+    font-size: 1.2rem;
+    outline: none;
+}
+.search-suggestions {
+    position: absolute;
+    top: 110%; left: 0; right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+}
+.search-suggestions.active { display: block; }
+.suggestion-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-color);
+    text-decoration: none;
+}
+.suggestion-item:hover { background: var(--bg-color); }
+.suggestion-item .url { font-size: 0.8rem; color: var(--text-muted); margin-left: auto; }
+
+/* --- DASHBOARD --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    height: 380px; /* Fixed height to keep layout stable */
+}
+
+/* Tasks */
+.task-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+}
+/* FIXED: Bigger Heading */
+.card-header h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--accent-color);
+}
+.task-list li {
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+.add-task-btn {
+    position: absolute; bottom: 20px; right: 20px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: var(--bg-color);
+    font-size: 24px;
+    display: flex; justify-content: center; align-items: center;
+}
+
+/* Right Column */
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    height: 100%;
+}
+
+/* FIXED: Clock smaller, Stats bigger */
+.clock-card {
+    flex: 0.8; /* Takes less space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.digital-watch h1 { font-size: 3rem; color: var(--accent-color); margin-bottom: 0; }
+.digital-watch p { color: var(--text-muted); font-size: 1.1rem; }
+
+.stats-card {
+    flex: 1.2; /* Takes more space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.stat-bar { margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); }
+.bar-fill {
+    height: 6px;
+    background: var(--accent-color);
+    border-radius: 3px;
+    margin-top: 6px;
+    opacity: 0.8;
+}
+
+/* --- SHORTCUTS --- */
+.shortcuts-section { width: 100%; }
+.shortcuts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+.shortcut-item, .add-shortcut {
+    width: 100px;
+    height: 100px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 5px;
+}
+.shortcut-item img { width: 24px; height: 24px; margin-bottom: 8px; }
+.shortcut-item:hover, .add-shortcut:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-color);
+}
+.add-shortcut { font-size: 2rem; color: var(--text-muted); }
+
+/* --- MODAL --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex; justify-content: center; align-items: center;
+}
+.modal-overlay.hidden { display: none; }
+
+.modal-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 25px;
+    border-radius: 16px;
+    width: 400px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.modal-box h3 { margin-bottom: 20px; color: var(--text-color); }
+
+.input-group { margin-bottom: 15px; }
+.input-group label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem; }
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    outline: none;
+}
+.input-group input:focus { border-color: var(--accent-color); }
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.btn-secondary, .btn-primary {
+    padding: 8px 16px; border-radius: 6px; font-weight: 500;
+}
+.btn-secondary { background: transparent; color: var(--text-muted); }
+.btn-secondary:hover { background: var(--bg-color); color: var(--text-color); }
+.btn-primary { background: var(--accent-color); color: var(--bg-color); }
+.btn-primary:hover { opacity: 0.9; }
+
+/* Quote & Theme Sidebar (Same as before) */
+.quote-section { text-align: center; color: var(--text-muted); font-style: italic; margin-top: 20px; }
+.theme-sidebar { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: var(--card-bg); border: 1px solid var(--border-color); padding: 10px; border-radius: 50px; }
+.theme-palette { display: flex; flex-direction: column; gap: 10px; }
+.theme-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-color); }
+.theme-dot[data-set-theme="dark"] { background: #121212; }
+.theme-dot[data-set-theme="light"] { background: #f5f5f7; }
+.theme-dot[data-set-theme="ocean"] { background: #0f172a; }
+.theme-dot[data-set-theme="forest"] { background: #1a2f1a; }

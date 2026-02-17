@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/layout.css">
+</head>
+<body>
+
+    <main class="app-container">
+        <!-- 1. Top Search Bar -->
+        <section class="search-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Search bookmarks..." autocomplete="off">
+            </div>
+            <ul id="search-suggestions" class="search-suggestions"></ul>
+        </section>
+
+        <!-- Middle Section -->
+        <div class="dashboard-grid">
+
+            <!-- 2. Left Card: Daily Tasks -->
+            <section class="card task-card">
+                <div class="card-header">
+                    <h3>Focus Tasks</h3>
+                </div>
+                <ul id="task-list" class="task-list"></ul>
+                <button class="add-task-btn" title="Add Task">+</button>
+            </section>
+
+            <!-- 3. Right Column -->
+            <div class="right-column">
+                <!-- Clock (Smaller now) -->
+                <section class="card clock-card">
+                    <div class="digital-watch">
+                        <h1 id="clock-time">00:00</h1>
+                        <p id="clock-date">Mon, Jan 1</p>
+                    </div>
+                </section>
+
+                <!-- Stats (Bigger now) -->
+                <section class="card stats-card">
+                    <h3>Stats</h3>
+                    <div class="stats-placeholder">
+                        <div class="stat-bar"><span>Browsing</span><div class="bar-fill" style="width: 60%"></div></div>
+                        <div class="stat-bar"><span>Coding</span><div class="bar-fill" style="width: 85%"></div></div>
+                        <div class="stat-bar"><span>Reading</span><div class="bar-fill" style="width: 40%"></div></div>
+                        <div class="stat-bar"><span>Music</span><div class="bar-fill" style="width: 25%"></div></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- 4. Shortcuts Grid -->
+        <section class="shortcuts-section">
+            <div id="shortcuts-grid" class="shortcuts-grid"></div>
+        </section>
+
+        <!-- 5. Bottom Quote -->
+        <section class="quote-section">
+            <p id="quote-text">"Code is like humor. When you have to explain it, it’s bad."</p>
+        </section>
+    </main>
+
+    <!-- Theme Switcher -->
+    <aside class="theme-sidebar">
+        <div class="theme-palette">
+            <button class="theme-dot" data-set-theme="dark" title="Dark"></button>
+            <button class="theme-dot" data-set-theme="light" title="Light"></button>
+            <button class="theme-dot" data-set-theme="ocean" title="Ocean"></button>
+            <button class="theme-dot" data-set-theme="forest" title="Forest"></button>
+        </div>
+    </aside>
+
+    <!-- NEW: Add Shortcut Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h3>Add Shortcut</h3>
+            <div class="input-group">
+                <label>Name</label>
+                <input type="text" id="modal-name" placeholder="e.g. YouTube">
+            </div>
+            <div class="input-group">
+                <label>URL</label>
+                <input type="url" id="modal-url" placeholder="https://youtube.com">
+            </div>
+            <div class="modal-actions">
+                <button id="modal-cancel-btn" class="btn-secondary">Cancel</button>
+                <button id="modal-save-btn" class="btn-primary">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
