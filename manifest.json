@@ -1,17 +1,19 @@
 {
   "manifest_version": 3,
-  "name": "YTab",
-  "version": "1.0.0",
-  "description": "A minimal, developer-focused new tab page.",
+  "name": "YTab Material You",
+  "version": "1.6.0",
+  "description": "A minimal, customizable new tab page.",
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
   "permissions": [
     "storage",
-    "bookmarks"
+    "bookmarks",
+    "history",
+    "favicon"
   ],
   "icons": {
-    "128": "icons/iocns-128.png"
+    "128": "icons/icon128.png"
   },
   "offline_enabled": true
 }

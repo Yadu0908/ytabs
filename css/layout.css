@@ -1,221 +1,343 @@
 /* layout.css */
 
 .app-container {
-    width: 100%;
-    max-width: 90vw;
-    padding: var(--spacing-lg);
+    /* ZOOM FIX: Use 90vw so it scales relative to viewport width, not pixels */
+    width: 90vw;
+    max-width: 1200px; /* Cap it for huge screens */
+    margin: 0 auto;    /* Center it */
+    padding: 20px 0;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: 30px;
+    height: 100vh;
+    justify-content: center;
 }
 
+/* --- CARDS --- */
 .card {
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-md);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-radius: var(--card-radius);
+    padding: 24px;
+    /* DYNAMIC BORDER: 1px in Dark, 2px Black in Light */
+    border: var(--border-width) solid var(--border-color);
+    position: relative;
+    transition: background 0.3s, border-color 0.3s;
 }
 
-/* --- SEARCH --- */
-.search-section { position: relative; z-index: 100; }
+/* --- SEARCH (FIXED SIZE) --- */
+.search-section {
+    position: relative;
+    z-index: 1000;
+    width: 100%; /* Match container width */
+}
+
 .search-bar {
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
     border-radius: 50px;
-    padding: 12px 20px;
+    /* REDUCED HEIGHT: 12px padding instead of 16px */
+    padding: 12px 24px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+    border: var(--border-width) solid var(--border-color);
+    transition: all 0.3s ease;
+    width: 100%; /* Fill the width */
 }
-.search-bar:focus-within { border-color: var(--accent-color); }
+
+.search-bar:focus-within {
+    border-color: var(--accent-color);
+    /* Remove glow in light mode for cleaner look */
+    box-shadow: 0 0 0 1px var(--accent-color);
+}
+
 .search-bar input {
     background: transparent;
     border: none;
     color: var(--text-color);
     width: 100%;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     outline: none;
 }
+.search-icon svg { color: var(--text-muted); }
+
+/* Suggestions */
 .search-suggestions {
     position: absolute;
-    top: 110%; left: 0; right: 0;
+    top: 115%; left: 0; right: 0;
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    max-height: 300px;
-    overflow-y: auto;
+    border-radius: 20px;
+    overflow: hidden;
     display: none;
-    box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: var(--border-width) solid var(--border-color);
+    z-index: 2000;
 }
 .search-suggestions.active { display: block; }
 .suggestion-item {
-    padding: 10px 20px;
+    padding: 12px 24px;
     cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     color: var(--text-color);
-    text-decoration: none;
+    border-bottom: 1px solid var(--border-color);
 }
-.suggestion-item:hover { background: var(--bg-color); }
-.suggestion-item .url { font-size: 0.8rem; color: var(--text-muted); margin-left: auto; }
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:hover { background: var(--hover-bg); }
 
-/* --- DASHBOARD --- */
+/* --- DASHBOARD GRID --- */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-lg);
-    height: 380px; /* Fixed height to keep layout stable */
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: 24px;
+    min-height: 380px;
 }
 
-/* Tasks */
+/* --- TASKS --- */
 .task-card {
     display: flex;
     flex-direction: column;
-    position: relative;
-    height: 100%;
+    min-height: 380px;
 }
-/* FIXED: Bigger Heading */
 .card-header h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
     color: var(--accent-color);
+    margin-bottom: 20px;
+    font-weight: 700;
 }
+.task-list {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-bottom: 70px;
+    max-height: 300px;
+}
+.task-list::-webkit-scrollbar { width: 0; }
+
 .task-list li {
-    padding: 12px 0;
+    padding: 14px 16px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 15px;
     color: var(--text-color);
-    font-size: 1.1rem;
-}
-.add-task-btn {
-    position: absolute; bottom: 20px; right: 20px;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--accent-color);
-    color: var(--bg-color);
-    font-size: 24px;
-    display: flex; justify-content: center; align-items: center;
-}
-
-/* Right Column */
-.right-column {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg);
-    height: 100%;
-}
-
-/* FIXED: Clock smaller, Stats bigger */
-.clock-card {
-    flex: 0.8; /* Takes less space */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-.digital-watch h1 { font-size: 3rem; color: var(--accent-color); margin-bottom: 0; }
-.digital-watch p { color: var(--text-muted); font-size: 1.1rem; }
-
-.stats-card {
-    flex: 1.2; /* Takes more space */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-.stat-bar { margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); }
-.bar-fill {
-    height: 6px;
-    background: var(--accent-color);
-    border-radius: 3px;
-    margin-top: 6px;
-    opacity: 0.8;
-}
-
-/* --- SHORTCUTS --- */
-.shortcuts-section { width: 100%; }
-.shortcuts-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-md);
-}
-.shortcut-item, .add-shortcut {
-    width: 100px;
-    height: 100px;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    font-size: 1rem;
+    background: var(--bg-color);
+    border-radius: 16px;
+    transition: background 0.2s;
     cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
-    text-decoration: none;
-    color: var(--text-color);
-    font-size: 0.8rem;
-    text-align: center;
-    padding: 5px;
+    /* Add border to list items in light mode too */
+    border: 1px solid transparent;
 }
-.shortcut-item img { width: 24px; height: 24px; margin-bottom: 8px; }
-.shortcut-item:hover, .add-shortcut:hover {
-    transform: translateY(-4px);
+/* Specific fix for Light Mode List Items */
+body[data-mode="light"] .task-list li {
+    border-color: var(--border-color);
+    background: #ffffff;
+}
+
+.task-list li:hover { background: var(--hover-bg); }
+
+/* Custom Checkbox */
+.task-list input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none; width: 0; height: 0; position: absolute; opacity: 0;
+}
+.custom-checkbox {
+    width: 24px; height: 24px;
+    border: 2px solid var(--text-muted);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+.task-list input:checked + .custom-checkbox {
+    background-color: var(--accent-color);
     border-color: var(--accent-color);
 }
-.add-shortcut { font-size: 2rem; color: var(--text-muted); }
+.custom-checkbox::after {
+    content: ''; width: 5px; height: 10px;
+    border: solid var(--card-bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0; margin-bottom: 2px;
+}
+.task-list input:checked + .custom-checkbox::after { opacity: 1; }
+.task-text { transition: opacity 0.2s; }
+.task-list input:checked ~ .task-text { opacity: 0.5; text-decoration: line-through; }
+
+/* FAB Button */
+.add-task-btn {
+    position: absolute; bottom: 24px; right: 24px;
+    width: 56px; height: 56px;
+    border-radius: 18px;
+    background: var(--accent-color);
+    color: #fff;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+    /* Border for light mode consistency */
+    border: var(--border-width) solid transparent;
+}
+body[data-mode="light"] .add-task-btn { border-color: #000; color: #fff; }
+
+.add-task-btn:hover { transform: scale(1.05); }
+.add-task-btn svg { width: 28px; height: 28px; stroke-width: 2; }
+.delete-task-btn { margin-left: auto; background: transparent; color: #ef4444; opacity: 0; transition: opacity 0.2s; padding: 5px; }
+.task-list li:hover .delete-task-btn { opacity: 1; }
+
+/* --- RIGHT COLUMN --- */
+.right-column { display: flex; flex-direction: column; gap: 24px; }
+
+.clock-card {
+    background: transparent; border: none; padding: 0;
+    display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+}
+.digital-watch h1 { font-size: 4.5rem; line-height: 1; color: var(--text-color); letter-spacing: -2px; }
+.digital-watch p { color: var(--accent-color); font-size: 1.2rem; font-weight: 600; }
+
+.stats-card { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+.stats-card h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 20px; font-weight: 700; }
+.stats-placeholder { display: flex; flex-direction: column; gap: 16px; }
+.stat-bar { font-size: 0.9rem; }
+.bar-track { background: var(--bg-color); height: 8px; border-radius: 10px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 10px; background: var(--accent-color); }
+
+/* --- SHORTCUTS --- */
+.shortcuts-section { width: 100%; margin-top: 20px; }
+.shortcuts-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+
+.shortcut-item {
+    width: 80px; height: 80px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    color: var(--text-color);
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: transform 0.2s, background 0.2s;
+    border: var(--border-width) solid var(--border-color);
+}
+.shortcut-item img { width: 28px; height: 28px; margin-bottom: 8px; border-radius: 6px; }
+.shortcut-item:hover { transform: translateY(-4px); border-color: var(--accent-color); }
+
+.add-shortcut {
+    width: 80px; height: 80px;
+    background: transparent;
+    border: 2px dashed var(--border-color);
+    border-radius: 20px;
+    display: flex; justify-content: center; align-items: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.add-shortcut:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+/* --- THEME SIDEBAR --- */
+.theme-sidebar {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--card-bg);
+    padding: 15px 10px;
+    border-radius: 50px;
+    border: var(--border-width) solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    z-index: 500;
+}
+
+.mode-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--bg-color);
+    color: var(--text-color);
+    display: flex; justify-content: center; align-items: center;
+    transition: 0.2s;
+    border: 1px solid var(--border-color);
+}
+.mode-btn:hover { background: var(--hover-bg); color: var(--accent-color); }
+
+[data-mode="dark"] .sun-icon { display: block; }
+[data-mode="dark"] .moon-icon { display: none; }
+[data-mode="light"] .sun-icon { display: none; }
+[data-mode="light"] .moon-icon { display: block; }
+
+.divider { width: 20px; height: 1px; background: var(--border-color); }
+.theme-palette { display: flex; flex-direction: column; gap: 10px; }
+.theme-dot {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s;
+}
+.theme-dot:hover { transform: scale(1.2); }
+
+/* Active Indicator */
+[data-accent="blue"] .theme-dot[data-set-accent="blue"],
+[data-accent="red"] .theme-dot[data-set-accent="red"],
+[data-accent="green"] .theme-dot[data-set-accent="green"],
+[data-accent="purple"] .theme-dot[data-set-accent="purple"],
+[data-accent="pink"] .theme-dot[data-set-accent="pink"],
+[data-accent="orange"] .theme-dot[data-set-accent="orange"],
+[data-accent="yellow"] .theme-dot[data-set-accent="yellow"],
+[data-accent="teal"] .theme-dot[data-set-accent="teal"],
+[data-accent="cyan"] .theme-dot[data-set-accent="cyan"],
+[data-accent="indigo"] .theme-dot[data-set-accent="indigo"] {
+    border-color: var(--text-color);
+    transform: scale(1.1);
+}
 
 /* --- MODAL --- */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    display: flex; justify-content: center; align-items: center;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+    z-index: 2000; display: flex; justify-content: center; align-items: center;
 }
 .modal-overlay.hidden { display: none; }
-
 .modal-box {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 25px;
-    border-radius: 16px;
-    width: 400px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg); padding: 30px; border-radius: 24px; width: 400px;
+    border: var(--border-width) solid var(--border-color);
 }
 .modal-box h3 { margin-bottom: 20px; color: var(--text-color); }
-
 .input-group { margin-bottom: 15px; }
-.input-group label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem; }
 .input-group input {
-    width: 100%;
-    padding: 10px;
-    background: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-color);
-    outline: none;
+    width: 100%; padding: 14px; background: var(--input-bg);
+    border: 1px solid var(--border-color); border-radius: 12px;
+    color: var(--text-color); outline: none; transition: 0.2s;
 }
 .input-group input:focus { border-color: var(--accent-color); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+.btn-secondary { padding: 10px 20px; color: var(--text-muted); background: transparent; font-weight: 500; }
+.btn-primary { padding: 10px 24px; background: var(--accent-color); color: #fff; border-radius: 12px; font-weight: 600; }
 
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-.btn-secondary, .btn-primary {
-    padding: 8px 16px; border-radius: 6px; font-weight: 500;
-}
-.btn-secondary { background: transparent; color: var(--text-muted); }
-.btn-secondary:hover { background: var(--bg-color); color: var(--text-color); }
-.btn-primary { background: var(--accent-color); color: var(--bg-color); }
-.btn-primary:hover { opacity: 0.9; }
-
-/* Quote & Theme Sidebar (Same as before) */
 .quote-section { text-align: center; color: var(--text-muted); font-style: italic; margin-top: 20px; }
-.theme-sidebar { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: var(--card-bg); border: 1px solid var(--border-color); padding: 10px; border-radius: 50px; }
-.theme-palette { display: flex; flex-direction: column; gap: 10px; }
-.theme-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-color); }
-.theme-dot[data-set-theme="dark"] { background: #121212; }
-.theme-dot[data-set-theme="light"] { background: #f5f5f7; }
-.theme-dot[data-set-theme="ocean"] { background: #0f172a; }
-.theme-dot[data-set-theme="forest"] { background: #1a2f1a; }
+
+
+/* Custom Icon Colors */
+.custom-add-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    transition: filter 0.3s;
+}
+
+/* Dark Mode: Make icons white */
+[data-mode="dark"] .custom-add-icon {
+    filter: invert(1) brightness(2);
+}
+
+/* Light Mode: Make icons black */
+[data-mode="light"] .custom-add-icon {
+    filter: none; /* Assuming the SVG is black by default */
+    opacity: 0.7;
+}
+
+/* FAB Button is always vibrant, so icon should be white */
+.add-task-btn .custom-add-icon {
+    filter: invert(1) brightness(2) !important;
+}

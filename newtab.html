@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-mode="dark" data-accent="blue">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Tab</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -14,27 +20,28 @@
         <!-- 1. Top Search Bar -->
         <section class="search-section">
             <div class="search-bar">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="search-input" placeholder="Search bookmarks..." autocomplete="off">
+                <span class="search-icon">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input type="text" id="search-input" placeholder="Type here..." autocomplete="off">
             </div>
             <ul id="search-suggestions" class="search-suggestions"></ul>
         </section>
 
         <!-- Middle Section -->
         <div class="dashboard-grid">
-
-            <!-- 2. Left Card: Daily Tasks -->
+            <!-- 2. Left Card: Tasks -->
             <section class="card task-card">
                 <div class="card-header">
                     <h3>Focus Tasks</h3>
                 </div>
                 <ul id="task-list" class="task-list"></ul>
-                <button class="add-task-btn" title="Add Task">+</button>
+                <!-- Add Button injected via JS -->
             </section>
 
             <!-- 3. Right Column -->
             <div class="right-column">
-                <!-- Clock (Smaller now) -->
+                <!-- Clock -->
                 <section class="card clock-card">
                     <div class="digital-watch">
                         <h1 id="clock-time">00:00</h1>
@@ -42,15 +49,10 @@
                     </div>
                 </section>
 
-                <!-- Stats (Bigger now) -->
+                <!-- Stats -->
                 <section class="card stats-card">
-                    <h3>Stats</h3>
-                    <div class="stats-placeholder">
-                        <div class="stat-bar"><span>Browsing</span><div class="bar-fill" style="width: 60%"></div></div>
-                        <div class="stat-bar"><span>Coding</span><div class="bar-fill" style="width: 85%"></div></div>
-                        <div class="stat-bar"><span>Reading</span><div class="bar-fill" style="width: 40%"></div></div>
-                        <div class="stat-bar"><span>Music</span><div class="bar-fill" style="width: 25%"></div></div>
-                    </div>
+                    <h3>Activity (24h)</h3>
+                    <div class="stats-placeholder"></div>
                 </section>
             </div>
         </div>
@@ -62,35 +64,63 @@
 
         <!-- 5. Bottom Quote -->
         <section class="quote-section">
-            <p id="quote-text">"Code is like humor. When you have to explain it, it’s bad."</p>
+            <p id="quote-text">"Simplicity is the soul of efficiency."</p>
         </section>
     </main>
 
-    <!-- Theme Switcher -->
+    <!-- Theme Sidebar (Single Line Vertical) -->
     <aside class="theme-sidebar">
+        <!-- Light/Dark Toggle -->
+        <button id="mode-toggle" class="mode-btn" title="Toggle Light/Dark">
+            <!-- Sun Icon -->
+            <svg class="sun-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <!-- Moon Icon -->
+            <svg class="moon-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <div class="divider"></div>
+
+        <!-- 10 Material Colors -->
         <div class="theme-palette">
-            <button class="theme-dot" data-set-theme="dark" title="Dark"></button>
-            <button class="theme-dot" data-set-theme="light" title="Light"></button>
-            <button class="theme-dot" data-set-theme="ocean" title="Ocean"></button>
-            <button class="theme-dot" data-set-theme="forest" title="Forest"></button>
+            <button class="theme-dot" data-set-accent="blue" title="Blue" style="background: #3b82f6;"></button>
+            <button class="theme-dot" data-set-accent="purple" title="Purple" style="background: #a855f7;"></button>
+            <button class="theme-dot" data-set-accent="pink" title="Pink" style="background: #ec4899;"></button>
+            <button class="theme-dot" data-set-accent="red" title="Red" style="background: #ef4444;"></button>
+            <button class="theme-dot" data-set-accent="orange" title="Orange" style="background: #f97316;"></button>
+            <button class="theme-dot" data-set-accent="yellow" title="Yellow" style="background: #eab308;"></button>
+            <button class="theme-dot" data-set-accent="green" title="Green" style="background: #22c55e;"></button>
+            <button class="theme-dot" data-set-accent="teal" title="Teal" style="background: #14b8a6;"></button>
+            <button class="theme-dot" data-set-accent="cyan" title="Cyan" style="background: #06b6d4;"></button>
+            <button class="theme-dot" data-set-accent="indigo" title="Indigo" style="background: #6366f1;"></button>
         </div>
     </aside>
 
-    <!-- NEW: Add Shortcut Modal -->
+    <!-- Modals -->
     <div id="modal-overlay" class="modal-overlay hidden">
         <div class="modal-box">
             <h3>Add Shortcut</h3>
             <div class="input-group">
-                <label>Name</label>
-                <input type="text" id="modal-name" placeholder="e.g. YouTube">
+                <input type="text" id="modal-name" placeholder="Name">
             </div>
             <div class="input-group">
-                <label>URL</label>
-                <input type="url" id="modal-url" placeholder="https://youtube.com">
+                <input type="url" id="modal-url" placeholder="URL (https://...)">
             </div>
             <div class="modal-actions">
                 <button id="modal-cancel-btn" class="btn-secondary">Cancel</button>
-                <button id="modal-save-btn" class="btn-primary">Done</button>
+                <button id="modal-save-btn" class="btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="task-modal-overlay" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h3>New Task</h3>
+            <div class="input-group">
+                <input type="text" id="task-modal-input" placeholder="What needs to be done?">
+            </div>
+            <div class="modal-actions">
+                <button id="task-modal-cancel" class="btn-secondary">Cancel</button>
+                <button id="task-modal-save" class="btn-primary">Add</button>
             </div>
         </div>
     </div>

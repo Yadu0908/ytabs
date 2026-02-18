@@ -1,41 +1,60 @@
-/* Theme Definitions using CSS Variables */
+/* themes.css - Eye Comfort & Minimal Borders */
 
-/* 1. Dark (Default) */
-[data-theme="dark"] {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-color: #e0e0e0;
-    --text-muted: #a0a0a0;
-    --border-color: #333;
-    --accent-color: #bb86fc;
+/* --- SHARED VARIABLES --- */
+:root {
+    --transition-speed: 0.3s;
 }
 
-/* 2. Light */
-[data-theme="light"] {
-    --bg-color: #f5f5f7;
-    --card-bg: #ffffff;
-    --text-color: #1d1d1f;
-    --text-muted: #86868b;
-    --border-color: #d2d2d7;
-    --accent-color: #0071e3;
+/* --- 1. BASE MODES --- */
+
+/* DARK MODE: Matte Carbon (Softer on eyes, no harsh blues) */
+[data-mode="dark"] {
+    --bg-color: #18181b;       /* Zinc 900 - Soft Matte Black */
+    --card-bg: #27272a;        /* Zinc 800 - Dark Grey */
+    --text-color: #e4e4e7;     /* Zinc 200 - Soft White */
+    --text-muted: #a1a1aa;     /* Zinc 400 - Muted Grey */
+    --border-color: #3f3f46;   /* Zinc 700 - Subtle Border */
+    --hover-bg: #3f3f46;
+    --input-bg: rgba(0,0,0,0.2);
+    --border-width: 1px;       /* Standard border for dark mode */
 }
 
-/* 3. Ocean */
-[data-theme="ocean"] {
-    --bg-color: #0f172a;
-    --card-bg: #1e293b;
-    --text-color: #f8fafc;
-    --text-muted: #94a3b8;
-    --border-color: #334155;
-    --accent-color: #38bdf8;
+/* LIGHT MODE: Neo-Minimal (Black Borders, Soft Background) */
+[data-mode="light"] {
+    --bg-color: #f4f4f5;       /* Zinc 100 - Very Soft Grey */
+    --card-bg: #ffffff;        /* Pure White Cards */
+    --text-color: #18181b;     /* Zinc 900 - Soft Black */
+    --text-muted: #71717a;     /* Zinc 500 */
+    --border-color: #18181b;   /* BLACK BORDER for minimal look */
+    --hover-bg: #e4e4e7;
+    --input-bg: #fafafa;
+    --border-width: 2px;       /* Thicker border for the "Sketch/Minimal" look */
 }
 
-/* 4. Forest */
-[data-theme="forest"] {
-    --bg-color: #1a2f1a;
-    --card-bg: #264226;
-    --text-color: #e8f5e9;
-    --text-muted: #a5d6a7;
-    --border-color: #388e3c;
-    --accent-color: #66bb6a;
-}
+/* --- 2. ACCENT COLORS (Desaturated for Eye Comfort) --- */
+
+/* Note: In Light Mode, we use the accent color for text/highlights,
+   but keep the background white/black for high contrast. */
+
+[data-accent="blue"]   { --accent-color: #60a5fa; --accent-bg: rgba(96, 165, 250, 0.15); }
+[data-accent="purple"] { --accent-color: #c084fc; --accent-bg: rgba(192, 132, 252, 0.15); }
+[data-accent="pink"]   { --accent-color: #f472b6; --accent-bg: rgba(244, 114, 182, 0.15); }
+[data-accent="red"]    { --accent-color: #f87171; --accent-bg: rgba(248, 113, 113, 0.15); }
+[data-accent="orange"] { --accent-color: #fb923c; --accent-bg: rgba(251, 146, 60, 0.15); }
+[data-accent="yellow"] { --accent-color: #facc15; --accent-bg: rgba(250, 204, 21, 0.15); }
+[data-accent="green"]  { --accent-color: #4ade80; --accent-bg: rgba(74, 222, 128, 0.15); }
+[data-accent="teal"]   { --accent-color: #2dd4bf; --accent-bg: rgba(45, 212, 191, 0.15); }
+[data-accent="cyan"]   { --accent-color: #22d3ee; --accent-bg: rgba(34, 211, 238, 0.15); }
+[data-accent="indigo"] { --accent-color: #818cf8; --accent-bg: rgba(129, 140, 248, 0.15); }
+
+/* Light Mode Specific Accent Overrides (Darker for readability against white) */
+[data-mode="light"][data-accent="blue"]   { --accent-color: #2563eb; --accent-bg: #eff6ff; }
+[data-mode="light"][data-accent="purple"] { --accent-color: #9333ea; --accent-bg: #faf5ff; }
+[data-mode="light"][data-accent="pink"]   { --accent-color: #db2777; --accent-bg: #fdf2f8; }
+[data-mode="light"][data-accent="red"]    { --accent-color: #dc2626; --accent-bg: #fef2f2; }
+[data-mode="light"][data-accent="orange"] { --accent-color: #ea580c; --accent-bg: #fff7ed; }
+[data-mode="light"][data-accent="yellow"] { --accent-color: #ca8a04; --accent-bg: #fefce8; }
+[data-mode="light"][data-accent="green"]  { --accent-color: #16a34a; --accent-bg: #f0fdf4; }
+[data-mode="light"][data-accent="teal"]   { --accent-color: #0d9488; --accent-bg: #f0fdfa; }
+[data-mode="light"][data-accent="cyan"]   { --accent-color: #0891b2; --accent-bg: #ecfeff; }
+[data-mode="light"][data-accent="indigo"] { --accent-color: #4f46e5; --accent-bg: #eef2ff; }
