@@ -1,18 +1,20 @@
 // ui.js
 
-// Using the local file 'icons/add-svgrepo-com.svg'
 const ICONS = {
-    trash: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>`,
+    trash: `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>`,
     plusImg: `<img src="icons/add-svgrepo-com.svg" alt="Add" class="custom-add-icon">`,
-    globe: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>`
+    globe: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>`,
+    // Three dots icon for edit
+    dots: `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>`
 };
 
 export const UI = {
+    // ... (renderClock, renderTasks, updateStats remain same) ...
     renderClock: () => {
         const timeEl = document.getElementById('clock-time');
         const dateEl = document.getElementById('clock-date');
         const now = new Date();
-        timeEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        timeEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
         dateEl.textContent = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
     },
 
@@ -33,13 +35,12 @@ export const UI = {
             </li>
         `).join('');
 
-        // Inject Floating Action Button (FAB) with Custom Icon
         let btn = document.querySelector('.add-task-btn');
         if(!btn) {
             btn = document.createElement('button');
             btn.className = 'add-task-btn';
             btn.title = "Add Task";
-            btn.innerHTML = ICONS.plusImg; // Using the IMG tag
+            btn.innerHTML = ICONS.plusImg;
             card.appendChild(btn);
         }
     },
@@ -71,21 +72,37 @@ export const UI = {
     renderShortcuts: (shortcuts) => {
         const grid = document.getElementById('shortcuts-grid');
 
-        let html = shortcuts.map(s => {
+        let html = shortcuts.map((s, index) => {
             const iconUrl = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(s.url)}&size=64`;
 
             return `
-            <a href="${s.url}" class="shortcut-item">
-                <img src="${iconUrl}" alt="icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <div class="fallback-icon" style="display:none; width:28px; height:28px; color:var(--accent-color);">${ICONS.globe}</div>
-                <span>${s.title}</span>
-            </a>
+            <div class="shortcut-wrapper">
+                <!-- Edit Button (Top Right) -->
+                <button class="shortcut-edit-btn" data-index="${index}" title="Edit Shortcut">
+                    ${ICONS.dots}
+                </button>
+
+                <!-- Clickable Tile -->
+                <a href="${s.url}" class="shortcut-tile">
+                    <img src="${iconUrl}" alt="icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="fallback-icon" style="display:none; width:28px; height:28px; color:var(--accent-color);">${ICONS.globe}</div>
+                </a>
+
+                <!-- Label Below -->
+                <span class="shortcut-label">${s.title}</span>
+            </div>
             `;
         }).join('');
 
-        // The "Add" Tile using the custom icon
+        // The "Add" Button (Now styled as a wrapper too for alignment)
         if (shortcuts.length < 9) {
-            html += `<div id="open-modal-btn" class="add-shortcut" title="Add Shortcut">${ICONS.plusImg}</div>`;
+            html += `
+            <div class="shortcut-wrapper">
+                <div id="open-modal-btn" class="add-shortcut" title="Add Shortcut">
+                    ${ICONS.plusImg}
+                </div>
+                <span class="shortcut-label">Add Shortcut</span>
+            </div>`;
         }
         grid.innerHTML = html;
     },
@@ -107,10 +124,3 @@ export const UI = {
         container.classList.add('active');
     }
 };
-
-
-// ui.js
-
-
-
-/* ... (Rest of ui.js is same as previous, just ensure this CSS is in layout.css) ... */

@@ -7,7 +7,7 @@ export async function initTheme() {
 
     // 1. Load Saved Preferences
     const savedMode = await Storage.get('userMode') || 'dark';
-    const savedAccent = await Storage.get('userAccent') || 'blue';
+    const savedAccent = await Storage.get('userAccent') || 'grey';
 
     setMode(savedMode);
     setAccent(savedAccent);

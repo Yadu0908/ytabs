@@ -1,55 +1,64 @@
 /* layout.css */
 
 .app-container {
-    /* ZOOM FIX: Use 90vw so it scales relative to viewport width, not pixels */
     width: 90vw;
-    max-width: 1200px; /* Cap it for huge screens */
-    margin: 0 auto;    /* Center it */
+    max-width: 1000px;
+    margin: 0 auto;
     padding: 20px 0;
     display: flex;
     flex-direction: column;
     gap: 30px;
     height: 100vh;
     justify-content: center;
-}
-
-/* --- CARDS --- */
-.card {
-    background: var(--card-bg);
-    border-radius: var(--card-radius);
-    padding: 24px;
-    /* DYNAMIC BORDER: 1px in Dark, 2px Black in Light */
-    border: var(--border-width) solid var(--border-color);
     position: relative;
-    transition: background 0.3s, border-color 0.3s;
+    z-index: 10;
 }
 
-/* --- SEARCH (FIXED SIZE) --- */
+/* --- FOCUS BLUR OVERLAY --- */
+#focus-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+body.search-focus #focus-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- SEARCH --- */
 .search-section {
     position: relative;
-    z-index: 1000;
-    width: 100%; /* Match container width */
+    z-index: 1001;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    transition: transform 0.3s;
+}
+body.search-focus .search-section {
+    transform: scale(1.05);
 }
 
 .search-bar {
     background: var(--card-bg);
     border-radius: 50px;
-    /* REDUCED HEIGHT: 12px padding instead of 16px */
-    padding: 12px 24px;
+    padding: 14px 24px;
     display: flex;
     align-items: center;
     gap: 15px;
     border: var(--border-width) solid var(--border-color);
-    transition: all 0.3s ease;
-    width: 100%; /* Fill the width */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
-
 .search-bar:focus-within {
     border-color: var(--accent-color);
-    /* Remove glow in light mode for cleaner look */
-    box-shadow: 0 0 0 1px var(--accent-color);
 }
-
 .search-bar input {
     background: transparent;
     border: none;
@@ -58,21 +67,28 @@
     font-size: 1.1rem;
     outline: none;
 }
-.search-icon svg { color: var(--text-muted); }
+.search-icon svg {
+    color: var(--text-muted);
+}
 
-/* Suggestions */
 .search-suggestions {
     position: absolute;
-    top: 115%; left: 0; right: 0;
-    background: var(--card-bg);
+    top: 115%;
+    left: 0;
+    right: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border-radius: 20px;
     overflow: hidden;
     display: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    border: var(--border-width) solid var(--border-color);
-    z-index: 2000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    z-index: 1002;
 }
-.search-suggestions.active { display: block; }
+.search-suggestions.active {
+    display: block;
+}
 .suggestion-item {
     padding: 12px 24px;
     cursor: pointer;
@@ -82,38 +98,85 @@
     color: var(--text-color);
     border-bottom: 1px solid var(--border-color);
 }
-.suggestion-item:last-child { border-bottom: none; }
-.suggestion-item:hover { background: var(--hover-bg); }
+.suggestion-item:hover {
+    background: var(--hover-bg);
+}
+
+/* --- CENTERED CLOCK --- */
+.clock-section {
+    text-align: center;
+    margin: 10px 0 20px 0;
+}
+.clock-section h1 {
+    font-family: 'JetBrains Mono', monospace;
+    /* REDUCED FONT SIZE HERE */
+    font-size: 3.5rem;
+    font-weight: 500;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 5px;
+    color: var(--accent-color);
+}
+.clock-section p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
 
 /* --- DASHBOARD GRID --- */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1.4fr 0.8fr;
+    grid-template-columns: 1fr 1fr;
     gap: 24px;
-    min-height: 380px;
+    height: 380px;
+}
+
+/* --- CARDS --- */
+.card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 24px;
+    border: var(--border-width) solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
 
 /* --- TASKS --- */
 .task-card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    min-height: 380px;
 }
+
 .card-header h3 {
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     color: var(--accent-color);
     margin-bottom: 20px;
-    font-weight: 700;
+    flex-shrink: 0;
 }
+
 .task-list {
-    overflow-y: auto;
     flex-grow: 1;
+    height: 0;
+    overflow-y: auto;
     padding-bottom: 70px;
-    max-height: 300px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
 }
-.task-list::-webkit-scrollbar { width: 0; }
+
+.task-list::-webkit-scrollbar {
+    width: 6px;
+}
+.task-list::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 3px;
+}
 
 .task-list li {
     padding: 14px 16px;
@@ -127,217 +190,263 @@
     border-radius: 16px;
     transition: background 0.2s;
     cursor: pointer;
-    /* Add border to list items in light mode too */
     border: 1px solid transparent;
-}
-/* Specific fix for Light Mode List Items */
-body[data-mode="light"] .task-list li {
-    border-color: var(--border-color);
-    background: #ffffff;
-}
-
-.task-list li:hover { background: var(--hover-bg); }
-
-/* Custom Checkbox */
-.task-list input[type="checkbox"] {
-    appearance: none; -webkit-appearance: none; width: 0; height: 0; position: absolute; opacity: 0;
-}
-.custom-checkbox {
-    width: 24px; height: 24px;
-    border: 2px solid var(--text-muted);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    transition: 0.2s;
     flex-shrink: 0;
 }
-.task-list input:checked + .custom-checkbox {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
+body[data-mode="light"] .task-list li {
+    border-color: var(--border-color);
+    background: #fff;
 }
-.custom-checkbox::after {
-    content: ''; width: 5px; height: 10px;
-    border: solid var(--card-bg);
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-    opacity: 0; margin-bottom: 2px;
+.task-list li:hover {
+    background: var(--hover-bg);
 }
+
+/* Checkbox */
+.task-list input[type="checkbox"] { appearance: none; width: 0; height: 0; position: absolute; }
+.custom-checkbox { width: 22px; height: 22px; border: 2px solid var(--text-muted); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.task-list input:checked + .custom-checkbox { background-color: var(--accent-color); border-color: var(--accent-color); }
+.custom-checkbox::after { content: ''; width: 5px; height: 9px; border: solid var(--card-bg); border-width: 0 2px 2px 0; transform: rotate(45deg); opacity: 0; margin-bottom: 2px; }
 .task-list input:checked + .custom-checkbox::after { opacity: 1; }
 .task-text { transition: opacity 0.2s; }
 .task-list input:checked ~ .task-text { opacity: 0.5; text-decoration: line-through; }
 
 /* FAB Button */
 .add-task-btn {
-    position: absolute; bottom: 24px; right: 24px;
-    width: 56px; height: 56px;
-    border-radius: 18px;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
     background: var(--accent-color);
     color: #fff;
-    display: flex; justify-content: center; align-items: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s;
-    /* Border for light mode consistency */
-    border: var(--border-width) solid transparent;
+    z-index: 10;
 }
-body[data-mode="light"] .add-task-btn { border-color: #000; color: #fff; }
-
 .add-task-btn:hover { transform: scale(1.05); }
-.add-task-btn svg { width: 28px; height: 28px; stroke-width: 2; }
-.delete-task-btn { margin-left: auto; background: transparent; color: #ef4444; opacity: 0; transition: opacity 0.2s; padding: 5px; }
+
+/* Delete Btn */
+.delete-task-btn { margin-left: auto; background: transparent; color: #ef4444; opacity: 0; transition: opacity 0.2s; padding: 8px; display: flex; }
 .task-list li:hover .delete-task-btn { opacity: 1; }
 
-/* --- RIGHT COLUMN --- */
-.right-column { display: flex; flex-direction: column; gap: 24px; }
-
-.clock-card {
-    background: transparent; border: none; padding: 0;
-    display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
-}
-.digital-watch h1 { font-size: 4.5rem; line-height: 1; color: var(--text-color); letter-spacing: -2px; }
-.digital-watch p { color: var(--accent-color); font-size: 1.2rem; font-weight: 600; }
-
-.stats-card { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-.stats-card h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 20px; font-weight: 700; }
-.stats-placeholder { display: flex; flex-direction: column; gap: 16px; }
-.stat-bar { font-size: 0.9rem; }
-.bar-track { background: var(--bg-color); height: 8px; border-radius: 10px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 10px; background: var(--accent-color); }
-
-/* --- SHORTCUTS --- */
-.shortcuts-section { width: 100%; margin-top: 20px; }
-.shortcuts-grid { display: flex; flex-wrap: wrap; gap: 20px; }
-
-.shortcut-item {
-    width: 80px; height: 80px;
-    background: var(--card-bg);
-    border-radius: 20px;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    color: var(--text-color);
-    font-size: 0.75rem;
-    font-weight: 500;
-    transition: transform 0.2s, background 0.2s;
-    border: var(--border-width) solid var(--border-color);
-}
-.shortcut-item img { width: 28px; height: 28px; margin-bottom: 8px; border-radius: 6px; }
-.shortcut-item:hover { transform: translateY(-4px); border-color: var(--accent-color); }
-
-.add-shortcut {
-    width: 80px; height: 80px;
-    background: transparent;
-    border: 2px dashed var(--border-color);
-    border-radius: 20px;
-    display: flex; justify-content: center; align-items: center;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.add-shortcut:hover { border-color: var(--accent-color); color: var(--accent-color); }
-
-/* --- THEME SIDEBAR --- */
-.theme-sidebar {
-    position: fixed;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--card-bg);
-    padding: 15px 10px;
-    border-radius: 50px;
-    border: var(--border-width) solid var(--border-color);
+/* Stats */
+.stats-placeholder {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    z-index: 500;
+    gap: 18px;
+    justify-content: center;
+    height: 100%;
+}
+.stat-bar { font-size: 0.9rem; }
+.bar-track {
+    background: var(--bg-color);
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: var(--accent-color);
+    width: 0;
+    animation: growBar 1s ease-out forwards;
 }
 
-.mode-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--bg-color);
-    color: var(--text-color);
-    display: flex; justify-content: center; align-items: center;
-    transition: 0.2s;
-    border: 1px solid var(--border-color);
+@keyframes growBar {
+    from { width: 0; }
 }
-.mode-btn:hover { background: var(--hover-bg); color: var(--accent-color); }
+
+/* --- SHORTCUTS --- */
+.shortcuts-section { width: 100%; margin-top: 10px; }
+.shortcuts-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
+.shortcut-item, .add-shortcut {
+    width: 70px; height: 70px; background: var(--card-bg); border-radius: 18px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    color: var(--text-color); font-size: 0.7rem; font-weight: 500;
+    border: var(--border-width) solid var(--border-color); transition: transform 0.2s;
+}
+.shortcut-item img { width: 24px; height: 24px; margin-bottom: 5px; border-radius: 4px; }
+.shortcut-item:hover, .add-shortcut:hover { transform: translateY(-4px); border-color: var(--accent-color); }
+.add-shortcut { background: transparent; border-style: dashed; color: var(--text-muted); }
+
+/* --- SIDEBAR --- */
+.theme-sidebar {
+    position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+    background: var(--card-bg); padding: 12px 8px; border-radius: 50px;
+    border: var(--border-width) solid var(--border-color);
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); z-index: 500;
+}
+.mode-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; border: 1px solid var(--border-color); cursor: pointer; }
+.divider { width: 20px; height: 1px; background: var(--border-color); }
+.theme-palette { display: flex; flex-direction: column; gap: 8px; }
+.theme-dot {
+    width: 26px; height: 26px; border-radius: 8px;
+    cursor: pointer; border: 1px solid rgba(255,255,255,0.2);
+    transition: transform 0.2s;
+    background-image: conic-gradient(
+        var(--dot-bg) 0deg 90deg,
+        var(--dot-card) 90deg 180deg,
+        var(--dot-accent) 180deg 270deg,
+        var(--dot-bg) 270deg 360deg
+    );
+}
+[data-mode="light"] .theme-dot { border-color: rgba(0,0,0,0.1); }
+.theme-dot:hover { transform: scale(1.15); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+.theme-dot.active { box-shadow: 0 0 0 2px var(--card-bg), 0 0 0 4px var(--accent-color); }
 
 [data-mode="dark"] .sun-icon { display: block; }
 [data-mode="dark"] .moon-icon { display: none; }
 [data-mode="light"] .sun-icon { display: none; }
 [data-mode="light"] .moon-icon { display: block; }
 
-.divider { width: 20px; height: 1px; background: var(--border-color); }
-.theme-palette { display: flex; flex-direction: column; gap: 10px; }
-.theme-dot {
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: transform 0.2s;
-}
-.theme-dot:hover { transform: scale(1.2); }
+/* --- ICONS --- */
+.custom-add-icon { width: 20px; height: 20px; display: block; transition: filter 0.3s; }
+[data-mode="dark"] .custom-add-icon { filter: invert(1) brightness(2); }
+[data-mode="light"] .custom-add-icon { filter: opacity(0.6); }
+.add-task-btn .custom-add-icon { filter: invert(1) brightness(2) !important; }
 
-/* Active Indicator */
-[data-accent="blue"] .theme-dot[data-set-accent="blue"],
-[data-accent="red"] .theme-dot[data-set-accent="red"],
-[data-accent="green"] .theme-dot[data-set-accent="green"],
-[data-accent="purple"] .theme-dot[data-set-accent="purple"],
-[data-accent="pink"] .theme-dot[data-set-accent="pink"],
-[data-accent="orange"] .theme-dot[data-set-accent="orange"],
-[data-accent="yellow"] .theme-dot[data-set-accent="yellow"],
-[data-accent="teal"] .theme-dot[data-set-accent="teal"],
-[data-accent="cyan"] .theme-dot[data-set-accent="cyan"],
-[data-accent="indigo"] .theme-dot[data-set-accent="indigo"] {
-    border-color: var(--text-color);
-    transform: scale(1.1);
-}
+/* --- QUOTE --- */
+.quote-section { text-align: center; color: var(--text-muted); font-style: bold; margin-top: 25px; width: 100%; font-size: large; }
 
 /* --- MODAL --- */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-    z-index: 2000; display: flex; justify-content: center; align-items: center;
-}
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 2000; display: flex; justify-content: center; align-items: center; }
 .modal-overlay.hidden { display: none; }
-.modal-box {
-    background: var(--card-bg); padding: 30px; border-radius: 24px; width: 400px;
-    border: var(--border-width) solid var(--border-color);
+.modal-box { background: var(--card-bg); padding: 30px; border-radius: 24px; width: 380px; border: 1px solid var(--border-color); }
+
+.modal-box h3 {
+    margin-bottom: 10px; /* <--- CHANGE THIS VALUE */
+    color: var(--text-color);
 }
-.modal-box h3 { margin-bottom: 20px; color: var(--text-color); }
-.input-group { margin-bottom: 15px; }
-.input-group input {
-    width: 100%; padding: 14px; background: var(--input-bg);
-    border: 1px solid var(--border-color); border-radius: 12px;
-    color: var(--text-color); outline: none; transition: 0.2s;
-}
+.input-group input { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-color); outline: none; margin-bottom: 15px; }
 .input-group input:focus { border-color: var(--accent-color); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
-.btn-secondary { padding: 10px 20px; color: var(--text-muted); background: transparent; font-weight: 500; }
-.btn-primary { padding: 10px 24px; background: var(--accent-color); color: #fff; border-radius: 12px; font-weight: 600; }
-
-.quote-section { text-align: center; color: var(--text-muted); font-style: italic; margin-top: 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.btn-primary { padding: 8px 20px; background: var(--accent-color); color: #fff; border-radius: 10px; }
+.btn-secondary { padding: 8px 16px; color: var(--text-muted); background: transparent; }
 
 
-/* Custom Icon Colors */
-.custom-add-icon {
+/* layout.css */
+
+/* ... (Keep previous CSS) ... */
+
+/* --- SHORTCUTS (Chrome Style) --- */
+.shortcuts-section { width: 100%; margin-top: 20px; }
+.shortcuts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap:10px 0px; /* Row gap, Column gap */
+    justify-content: center;
+}
+
+/* The Wrapper (Invisible container) */
+.shortcut-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 110px; /* Fixed width for alignment */
+    position: relative;
+    group: hover;
+}
+
+/* The Colored Box (Tile) */
+.shortcut-tile, .add-shortcut {
+    width: 60px;
+    height: 60px;
+    background: var(--card-bg);
+    border-radius: 16%; /* Circle looks more like Chrome, or use 16px for square */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: var(--border-width) solid var(--border-color);
+    transition: transform 0.2s, background 0.2s;
+    position: relative;
+    cursor: pointer;
+}
+
+.shortcut-tile img {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+}
+
+/* Hover Effect on Tile */
+.shortcut-tile:hover, .add-shortcut:hover {
+    background: var(--hover-bg);
+    border-color: var(--accent-color);
+}
+
+/* The Label (Outside and Below) */
+.shortcut-label {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+.shortcut-wrapper:hover .shortcut-label {
+    background: var(--hover-bg);
+}
+
+/* The Add Button Styling */
+.add-shortcut {
+    background: transparent;
+    border-style: dashed;
+    color: var(--text-muted);
+}
+.add-shortcut:hover {
+    color: var(--accent-color);
+}
+
+/* --- EDIT BUTTON (3 Dots) --- */
+.shortcut-edit-btn {
+    position: absolute;
+    top: -5px;
+    right: 15px; /* Adjust based on tile width */
     width: 24px;
     height: 24px;
-    display: block;
-    transition: filter 0.3s;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-muted);
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s, transform 0.2s;
+    cursor: pointer;
+    z-index: 5;
 }
 
-/* Dark Mode: Make icons white */
-[data-mode="dark"] .custom-add-icon {
-    filter: invert(1) brightness(2);
+.shortcut-wrapper:hover .shortcut-edit-btn {
+    opacity: 1; /* Show on hover */
 }
 
-/* Light Mode: Make icons black */
-[data-mode="light"] .custom-add-icon {
-    filter: none; /* Assuming the SVG is black by default */
-    opacity: 0.7;
+.shortcut-edit-btn:hover {
+    background: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
 }
 
-/* FAB Button is always vibrant, so icon should be white */
-.add-task-btn .custom-add-icon {
-    filter: invert(1) brightness(2) !important;
+/* Modal Delete Button */
+.btn-danger {
+    padding: 8px 16px;
+    color: #ef4444;
+    background: transparent;
+    border: 1px solid #ef4444;
+    border-radius: 10px;
+    transition: 0.2s;
 }
+.btn-danger:hover {
+    background: #ef4444;
+    color: white;
+}
+.hidden { display: none !important; }

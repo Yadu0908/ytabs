@@ -1,7 +1,7 @@
 :root {
     --font-stack: 'Poppins', sans-serif;
     --transition-speed: 0.3s;
-    --card-radius: 28px; /* Material You Large Radius */
+    --card-radius: 24px;
 }
 
 * {

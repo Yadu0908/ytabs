@@ -4,6 +4,9 @@ import { Storage } from './storage.js';
 
 let myShortcuts = [];
 let myTasks = [];
+// Variable to track if we are editing (null) or adding (index number)
+let editingIndex = null;
+
 const defaultShortcuts = [
     { title: "GitHub", url: "https://github.com" },
     { title: "YouTube", url: "https://youtube.com" }
@@ -26,8 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupTaskModal();
 });
 
-// ... (loadData, saveData, calculateRealTimeStats, renderTasksWrapper, setupTaskModal, renderShortcutGrid, setupShortcutModal, setupRandomQuote - Keep these same as before) ...
-
 async function loadData() {
     const storedTasks = await Storage.get('myTasks');
     const storedShortcuts = await Storage.get('myShortcuts');
@@ -40,6 +41,7 @@ async function saveData() {
     await Storage.set('myShortcuts', myShortcuts);
 }
 
+// ... (calculateRealTimeStats, renderTasksWrapper, setupTaskModal - Keep same) ...
 function calculateRealTimeStats() {
     if (!chrome.history) return;
     const twentyFourHoursAgo = (new Date).getTime() - (24 * 60 * 60 * 1000);
@@ -108,25 +110,87 @@ function setupTaskModal() {
     modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
 }
 
+/* --- SHORTCUT LOGIC (UPDATED) --- */
 function renderShortcutGrid() {
     UI.renderShortcuts(myShortcuts);
+
+    // Add Listener for "Add" button
     const addBtn = document.getElementById('open-modal-btn');
-    if(addBtn) addBtn.addEventListener('click', openShortcutModal);
+    if(addBtn) {
+        addBtn.addEventListener('click', () => openShortcutModal(null)); // null = adding mode
+    }
+
+    // Add Listeners for "Edit" buttons
+    document.querySelectorAll('.shortcut-edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent link click
+            const index = parseInt(btn.getAttribute('data-index'));
+            openShortcutModal(index); // index = editing mode
+        });
+    });
 }
 
 const scModal = document.getElementById('modal-overlay');
 const scName = document.getElementById('modal-name');
 const scUrl = document.getElementById('modal-url');
-function openShortcutModal() { scModal.classList.remove('hidden'); scName.value = ''; scUrl.value = ''; scName.focus(); }
+const scTitle = document.getElementById('shortcut-modal-title');
+const scDeleteBtn = document.getElementById('modal-delete-btn');
+
+function openShortcutModal(index) {
+    scModal.classList.remove('hidden');
+    editingIndex = index;
+
+    if (index !== null) {
+        // Edit Mode
+        scTitle.textContent = "Edit Shortcut";
+        scName.value = myShortcuts[index].title;
+        scUrl.value = myShortcuts[index].url;
+        scDeleteBtn.classList.remove('hidden'); // Show delete button
+    } else {
+        // Add Mode
+        scTitle.textContent = "Add Shortcut";
+        scName.value = '';
+        scUrl.value = '';
+        scDeleteBtn.classList.add('hidden'); // Hide delete button
+        scName.focus();
+    }
+}
+
 function setupShortcutModal() {
+    // Cancel
     document.getElementById('modal-cancel-btn').addEventListener('click', () => scModal.classList.add('hidden'));
+
+    // Save (Add or Update)
     document.getElementById('modal-save-btn').addEventListener('click', () => {
         const title = scName.value.trim();
         let url = scUrl.value.trim();
         if(!title || !url) return;
         if (!url.startsWith('http')) url = 'https://' + url;
-        myShortcuts.push({ title, url }); saveData(); renderShortcutGrid(); scModal.classList.add('hidden');
+
+        if (editingIndex !== null) {
+            // Update existing
+            myShortcuts[editingIndex] = { title, url };
+        } else {
+            // Add new
+            myShortcuts.push({ title, url });
+        }
+
+        saveData();
+        renderShortcutGrid();
+        scModal.classList.add('hidden');
     });
+
+    // Delete
+    scDeleteBtn.addEventListener('click', () => {
+        if (editingIndex !== null) {
+            myShortcuts.splice(editingIndex, 1); // Remove item
+            saveData();
+            renderShortcutGrid();
+            scModal.classList.add('hidden');
+        }
+    });
+
+    // Close on background click
     scModal.addEventListener('click', (e) => { if (e.target === scModal) scModal.classList.add('hidden'); });
 }
 
@@ -137,13 +201,11 @@ function setupRandomQuote() {
     quoteEl.textContent = `"${codingQuotes[randomIndex]}"`;
 }
 
-/* --- SEARCH FIX --- */
 function setupSearch() {
     const input = document.getElementById('search-input');
     const suggestionsBox = document.getElementById('search-suggestions');
     const body = document.body;
 
-    // Focus effects
     input.addEventListener('focus', () => body.classList.add('search-focus'));
     input.addEventListener('blur', () => {
         setTimeout(() => {
@@ -154,23 +216,18 @@ function setupSearch() {
         }, 200);
     });
 
-    // Input logic
     input.addEventListener('input', (e) => {
         const query = e.target.value.trim();
-
         if (query.length < 2) {
             suggestionsBox.classList.remove('active');
             return;
         }
-
         if (chrome.bookmarks) {
             chrome.bookmarks.search(query, (results) => {
-                // Filter out folders (items without URLs)
                 const filtered = results.filter(item => item.url).slice(0, 5);
-
                 if (filtered.length > 0) {
                     UI.renderSuggestions(filtered);
-                    suggestionsBox.classList.add('active'); // Explicitly show
+                    suggestionsBox.classList.add('active');
                 } else {
                     suggestionsBox.classList.remove('active');
                 }
