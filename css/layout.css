@@ -4,11 +4,13 @@
     width: 90vw;
     max-width: 1000px;
     margin: 0 auto;
-    padding: 20px 0;
+    /* CHANGE: Use min-height instead of fixed height */
+    min-height: 100vh;
+    padding: 40px 0; /* Add vertical padding so top/bottom aren't glued to edge */
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    height: 100vh;
+    /* CHANGE: Use clamp for gap. It shrinks gap on small screens, grows on big ones */
+    gap: clamp(15px, 3vh, 30px);
     justify-content: center;
     position: relative;
     z-index: 10;
@@ -49,7 +51,7 @@ body.search-focus .search-section {
 .search-bar {
     background: var(--card-bg);
     border-radius: 50px;
-    padding: 14px 24px;
+    padding: 12px 24px;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -105,12 +107,12 @@ body.search-focus .search-section {
 /* --- CENTERED CLOCK --- */
 .clock-section {
     text-align: center;
-    margin: 10px 0 20px 0;
+    margin: 20px 0 20px 0;
 }
 .clock-section h1 {
     font-family: 'JetBrains Mono', monospace;
-    /* REDUCED FONT SIZE HERE */
-    font-size: 3.5rem;
+    /* CHANGE: Responsive Font Size. Min 2.5rem, Preferred 6vh, Max 4rem */
+    font-size: clamp(2.5rem, 6vh, 4rem);
     font-weight: 500;
     letter-spacing: -2px;
     line-height: 1;
@@ -130,7 +132,12 @@ body.search-focus .search-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
-    height: 380px;
+    align-items: stretch;
+    /* CHANGE: Flexible height.
+       It tries to be 380px, but won't exceed 45% of screen height. */
+    height: auto;
+    min-height: 300px;
+    max-height: 45vh;
 }
 
 /* --- CARDS --- */
@@ -162,10 +169,11 @@ body.search-focus .search-section {
 }
 
 .task-list {
-    flex-grow: 1;
-    height: 0;
     overflow-y: auto;
+    flex-grow: 1;
     padding-bottom: 70px;
+    /* CHANGE: Remove fixed max-height, let flexbox handle it */
+    height: 100%;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
 }
@@ -450,3 +458,33 @@ body[data-mode="light"] .task-list li {
     color: white;
 }
 .hidden { display: none !important; }
+
+
+@media (max-height: 800px) {
+    .app-container {
+        padding: 10px 0; /* Less padding */
+        gap: 15px;       /* Smaller gaps between sections */
+    }
+
+    .clock-section {
+        margin: 5px 0 10px 0; /* Less margin around clock */
+    }
+
+    .dashboard-grid {
+        min-height: 280px; /* Allow grid to be shorter */
+    }
+
+    .card {
+        padding: 16px; /* Smaller internal padding in cards */
+    }
+
+    .shortcut-item, .add-shortcut {
+        width: 60px; /* Smaller shortcuts */
+        height: 60px;
+    }
+
+    .quote-section {
+        margin-top: 10px;
+        font-size: 0.9rem;
+    }
+}
