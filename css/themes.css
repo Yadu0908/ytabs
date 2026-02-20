@@ -40,7 +40,7 @@
 
 /* Yellow */
 [data-mode="dark"][data-accent="yellow"] {
-    --bg-color: #241f0e; --card-bg: #33290e; --text-color: #fef7e0; --text-muted: #fdd663;
+    --bg-color: #272213; --card-bg: #33290e; --text-color: #fef7e0; --text-muted: #fdd663;
     --border-color: #4d3e15; --accent-color: #fdd663; --accent-bg: #f9ab00;
 }
 

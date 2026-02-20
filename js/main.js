@@ -4,7 +4,6 @@ import { Storage } from './storage.js';
 
 let myShortcuts = [];
 let myTasks = [];
-// Variable to track if we are editing (null) or adding (index number)
 let editingIndex = null;
 
 const defaultShortcuts = [
@@ -14,8 +13,14 @@ const defaultShortcuts = [
 
 document.addEventListener('DOMContentLoaded', async () => {
     await initTheme();
+
+    // 1. Load Data
     await loadData();
 
+    // 2. Check for New Day & Reset Tasks
+    await checkAndResetDailyTasks();
+
+    // 3. Render UI
     renderTasksWrapper();
     UI.renderClock();
     renderShortcutGrid();
@@ -41,7 +46,22 @@ async function saveData() {
     await Storage.set('myShortcuts', myShortcuts);
 }
 
-// ... (calculateRealTimeStats, renderTasksWrapper, setupTaskModal - Keep same) ...
+// --- NEW FEATURE: DAILY TASK RESET ---
+async function checkAndResetDailyTasks() {
+    const today = new Date().toLocaleDateString(); // e.g., "2/20/2025"
+    const lastReset = await Storage.get('lastTaskResetDate');
+
+    // If dates don't match (it's a new day)
+    if (lastReset !== today) {
+        // Reset 'done' status to false for ALL tasks
+        myTasks = myTasks.map(t => ({ ...t, done: false }));
+
+        // Save updates
+        await Storage.set('myTasks', myTasks);
+        await Storage.set('lastTaskResetDate', today);
+    }
+}
+
 function calculateRealTimeStats() {
     if (!chrome.history) return;
     const twentyFourHoursAgo = (new Date).getTime() - (24 * 60 * 60 * 1000);
@@ -110,22 +130,19 @@ function setupTaskModal() {
     modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
 }
 
-/* --- SHORTCUT LOGIC (UPDATED) --- */
 function renderShortcutGrid() {
     UI.renderShortcuts(myShortcuts);
 
-    // Add Listener for "Add" button
     const addBtn = document.getElementById('open-modal-btn');
     if(addBtn) {
-        addBtn.addEventListener('click', () => openShortcutModal(null)); // null = adding mode
+        addBtn.addEventListener('click', () => openShortcutModal(null));
     }
 
-    // Add Listeners for "Edit" buttons
     document.querySelectorAll('.shortcut-edit-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent link click
+            e.preventDefault();
             const index = parseInt(btn.getAttribute('data-index'));
-            openShortcutModal(index); // index = editing mode
+            openShortcutModal(index);
         });
     });
 }
@@ -141,26 +158,22 @@ function openShortcutModal(index) {
     editingIndex = index;
 
     if (index !== null) {
-        // Edit Mode
         scTitle.textContent = "Edit Shortcut";
         scName.value = myShortcuts[index].title;
         scUrl.value = myShortcuts[index].url;
-        scDeleteBtn.classList.remove('hidden'); // Show delete button
+        scDeleteBtn.classList.remove('hidden');
     } else {
-        // Add Mode
         scTitle.textContent = "Add Shortcut";
         scName.value = '';
         scUrl.value = '';
-        scDeleteBtn.classList.add('hidden'); // Hide delete button
+        scDeleteBtn.classList.add('hidden');
         scName.focus();
     }
 }
 
 function setupShortcutModal() {
-    // Cancel
     document.getElementById('modal-cancel-btn').addEventListener('click', () => scModal.classList.add('hidden'));
 
-    // Save (Add or Update)
     document.getElementById('modal-save-btn').addEventListener('click', () => {
         const title = scName.value.trim();
         let url = scUrl.value.trim();
@@ -168,10 +181,8 @@ function setupShortcutModal() {
         if (!url.startsWith('http')) url = 'https://' + url;
 
         if (editingIndex !== null) {
-            // Update existing
             myShortcuts[editingIndex] = { title, url };
         } else {
-            // Add new
             myShortcuts.push({ title, url });
         }
 
@@ -180,17 +191,15 @@ function setupShortcutModal() {
         scModal.classList.add('hidden');
     });
 
-    // Delete
     scDeleteBtn.addEventListener('click', () => {
         if (editingIndex !== null) {
-            myShortcuts.splice(editingIndex, 1); // Remove item
+            myShortcuts.splice(editingIndex, 1);
             saveData();
             renderShortcutGrid();
             scModal.classList.add('hidden');
         }
     });
 
-    // Close on background click
     scModal.addEventListener('click', (e) => { if (e.target === scModal) scModal.classList.add('hidden'); });
 }
 

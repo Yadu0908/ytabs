@@ -393,7 +393,7 @@ body[data-mode="light"] .task-list li {
     border-radius: 4px;
 }
 .shortcut-wrapper:hover .shortcut-label {
-    background: var(--hover-bg);
+    /* background: var(--hover-bg); */
 }
 
 /* The Add Button Styling */
