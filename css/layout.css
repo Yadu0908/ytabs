@@ -4,13 +4,11 @@
     width: 90vw;
     max-width: 1000px;
     margin: 0 auto;
-    /* CHANGE: Use min-height instead of fixed height */
-    min-height: 100vh;
-    padding: 40px 0; /* Add vertical padding so top/bottom aren't glued to edge */
+    padding: 40px 0; /* Give top/bottom breathing room */
     display: flex;
     flex-direction: column;
-    /* CHANGE: Use clamp for gap. It shrinks gap on small screens, grows on big ones */
-    gap: clamp(15px, 3vh, 30px);
+    gap: 20px;
+    min-height: 100vh; /* FIX: Changed from height to min-height */
     justify-content: center;
     position: relative;
     z-index: 10;
@@ -133,11 +131,7 @@ body.search-focus .search-section {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     align-items: stretch;
-    /* CHANGE: Flexible height.
-       It tries to be 380px, but won't exceed 45% of screen height. */
-    height: auto;
-    min-height: 300px;
-    max-height: 45vh;
+    height: clamp(300px, 40vh, 420px); /* FIX: Smart responsive height */
 }
 
 /* --- CARDS --- */
@@ -148,8 +142,8 @@ body.search-focus .search-section {
     border: var(--border-width) solid var(--border-color);
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+    position: relative; /* FIX: Locks the streak & add button inside */
+    overflow: hidden; /* FIX: Keeps scrolling content from bleeding out */
 }
 
 /* --- TASKS --- */
@@ -169,25 +163,20 @@ body.search-focus .search-section {
 }
 
 .task-list {
-    overflow-y: auto;
-    flex-grow: 1;
-    padding-bottom: 70px;
-    /* CHANGE: Remove fixed max-height, let flexbox handle it */
-    height: 100%;
+    flex: 1 1 auto; /* FIX: Fills remaining space */
+    overflow-y: auto; /* FIX: Enables scrolling */
+    margin: 0;
+    padding: 0;
+    padding-bottom: 60px; /* Space for buttons at the bottom */
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
 }
 
-.task-list::-webkit-scrollbar {
-    width: 6px;
-}
-.task-list::-webkit-scrollbar-thumb {
-    background-color: var(--border-color);
-    border-radius: 3px;
-}
+.task-list::-webkit-scrollbar { width: 6px; }
+.task-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 3px; }
 
 .task-list li {
-    padding: 14px 16px;
+    padding: 12px 16px;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -221,7 +210,7 @@ body[data-mode="light"] .task-list li {
 /* FAB Button */
 .add-task-btn {
     position: absolute;
-    bottom: 20px;
+    bottom: 15px;
     right: 20px;
     width: 50px;
     height: 50px;
@@ -488,3 +477,4 @@ body[data-mode="light"] .task-list li {
         font-size: 0.9rem;
     }
 }
+

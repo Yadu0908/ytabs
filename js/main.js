@@ -6,6 +6,11 @@ let myShortcuts = [];
 let myTasks = [];
 let editingIndex = null;
 
+
+let currentStreak = 0;
+let lastStreakDate = null;
+
+
 const defaultShortcuts = [
     { title: "GitHub", url: "https://github.com" },
     { title: "YouTube", url: "https://youtube.com" }
@@ -37,10 +42,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadData() {
     const storedTasks = await Storage.get('myTasks');
     const storedShortcuts = await Storage.get('myShortcuts');
+
+    // ADD THESE LINES
+    currentStreak = await Storage.get('currentStreak') || 0;
+    lastStreakDate = await Storage.get('lastStreakDate');
+
     myTasks = storedTasks || [];
     myShortcuts = storedShortcuts || defaultShortcuts;
 }
-
 async function saveData() {
     await Storage.set('myTasks', myTasks);
     await Storage.set('myShortcuts', myShortcuts);
@@ -61,6 +70,46 @@ async function checkAndResetDailyTasks() {
         await Storage.set('lastTaskResetDate', today);
     }
 }
+
+// Streak update function.
+
+async function updateStreakLogic() {
+    const streakEl = document.getElementById('streak-display');
+    const allDone = myTasks.length > 0 && myTasks.every(t => t.done);
+    const today = new Date().toLocaleDateString();
+
+    // 1. Check if streak is broken (missed yesterday) on load
+    if (lastStreakDate) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toLocaleDateString();
+
+        // If last completion wasn't today AND wasn't yesterday, streak is broken
+        if (lastStreakDate !== today && lastStreakDate !== yesterdayStr && currentStreak > 0) {
+            currentStreak = 0;
+            await Storage.set('currentStreak', 0);
+        }
+    }
+
+    // 2. Update Streak if all tasks completed TODAY
+    if (allDone) {
+        if (lastStreakDate !== today) {
+            // First time completing today
+            currentStreak++;
+            lastStreakDate = today;
+            await Storage.set('currentStreak', currentStreak);
+            await Storage.set('lastStreakDate', today);
+        }
+        streakEl.classList.add('active');
+        streakEl.innerHTML = `🔥 ${currentStreak} Day Streak!`;
+    } else {
+        // Tasks pending
+        streakEl.classList.remove('active');
+        streakEl.innerHTML = `⚡ ${currentStreak} Day Streak`;
+    }
+}
+
+
 
 function calculateRealTimeStats() {
     if (!chrome.history) return;
@@ -98,6 +147,7 @@ function renderTasksWrapper() {
             myTasks = myTasks.filter(t => t.id !== id);
             saveData();
             renderTasksWrapper();
+            updateStreakLogic();
         });
     });
     document.querySelectorAll('.task-checkbox').forEach(box => {
