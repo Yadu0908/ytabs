@@ -296,10 +296,15 @@ body[data-mode="light"] .task-list li {
 .theme-dot:hover { transform: scale(1.15); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 .theme-dot.active { box-shadow: 0 0 0 2px var(--card-bg), 0 0 0 4px var(--accent-color); }
 
-[data-mode="dark"] .sun-icon { display: block; }
-[data-mode="dark"] .moon-icon { display: none; }
-[data-mode="light"] .sun-icon { display: none; }
-[data-mode="light"] .moon-icon { display: block; }
+[data-mode-preference="dark"] .sun-icon { display: none; }
+[data-mode-preference="dark"] .moon-icon { display: block; }
+[data-mode-preference="dark"] .auto-icon { display: none; }
+[data-mode-preference="light"] .sun-icon { display: block; }
+[data-mode-preference="light"] .moon-icon { display: none; }
+[data-mode-preference="light"] .auto-icon { display: none; }
+[data-mode-preference="auto"] .sun-icon { display: none; }
+[data-mode-preference="auto"] .moon-icon { display: none; }
+[data-mode-preference="auto"] .auto-icon { display: block; }
 
 /* --- ICONS --- */
 .custom-add-icon { width: 20px; height: 20px; display: block; transition: filter 0.3s; }
