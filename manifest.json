@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YTab",
-  "version": "1.8.0",
-  "description": "A minimal, customizable new tab page.",
+  "name": "YTab-2.0",
+  "version": "1.9.0",
+  "description": "A minimal, customizable new tab page with hydration reminders.",
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
@@ -12,8 +12,19 @@
     "history",
     "favicon"
   ],
+  "host_permissions": [
+    "https://media.giphy.com/*",
+    "https://media0.giphy.com/*",
+    "https://media1.giphy.com/*",
+    "https://media2.giphy.com/*",
+    "https://media3.giphy.com/*",
+    "https://media4.giphy.com/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; img-src 'self' https://media.giphy.com https://media0.giphy.com https://media1.giphy.com https://media2.giphy.com https://media3.giphy.com https://media4.giphy.com https://*.googapis.com data:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self';"
+  },
   "icons": {
     "128": "icons/icon128.png"
   },
   "offline_enabled": true
-}
+}
