@@ -67,33 +67,70 @@ function applyTheme(mode, color) {
   chrome.storage.local.set({ userTheme: { mode, color } });
 }
 
-function renderAppearanceUI() {
-  if (!themeGrid) return;
-  themeGrid.innerHTML = "";
-  themePresets.forEach(p => {
-    const wrapper = document.createElement("div");
-    wrapper.className = "theme-box-wrapper";
-    wrapper.dataset.color = p.c1;
-    wrapper.style.backgroundColor = p.c4;
-    wrapper.innerHTML = `<div class="theme-box split-bg" style="--c1:${p.c1}; --c2:${p.c2}; --c3:${p.c3};"></div>`;
-    wrapper.onclick = () => {
-      chrome.storage.local.get(["userTheme"], res =>
-        applyTheme(res.userTheme?.mode || "dark", p.c1)
-      );
-    };
-    themeGrid.appendChild(wrapper);
-  });
+const catCharacters = [
+  { id: "cat-gray",   emoji: "🐱", name: "Gray Cat" },
+  { id: "cat-orange", emoji: "🐈", name: "Orange Tabby" },
+  { id: "cat-black",  emoji: "🐈‍⬛", name: "Black Cat" },
+  { id: "cat-white",  emoji: "🤍", name: "White Cat" },
+  { id: "cat-purple", emoji: "🍇", name: "Purple Cat" }
+];
 
-  const customWrapper = document.createElement("div");
-  customWrapper.className = "theme-box-wrapper";
-  customWrapper.innerHTML = `
-    <div class="theme-box custom-picker-box" style="background:#4285f4;color:white;">
-      ${NEW_PLUS_ICON}
-      <input type="color" id="custom-color-picker">
-    </div>`;
-  customWrapper.querySelector("input").oninput = e =>
-    applyTheme("dark", e.target.value);
-  themeGrid.appendChild(customWrapper);
+function renderCatPicker() {
+  const container = document.getElementById("cat-picker");
+  if (!container) return;
+  container.innerHTML = "";
+
+  chrome.storage.local.get(["selectedCat"], res => {
+    const current = res.selectedCat || "cat-gray";
+    applyCatClass(current);
+
+    catCharacters.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = `cat-pick-item ${cat.id === current ? "active" : ""}`;
+      btn.innerHTML = cat.emoji;
+      btn.title = cat.name;
+      btn.onclick = () => {
+        document.querySelectorAll(".cat-pick-item").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        applyCatClass(cat.id);
+        chrome.storage.local.set({ selectedCat: cat.id });
+      };
+      container.appendChild(btn);
+    });
+  });
+}
+
+function applyCatClass(catId) {
+  const catW = document.getElementById("cat-widget");
+  if (!catW) return;
+  catW.className = `cat-widget ${catId}`;
+}
+
+function initCatMouseTracking() {
+  const catHead = document.querySelector(".cat-head");
+  const leftPupil  = document.querySelector("#cat-eye-l .cat-pupil");
+  const rightPupil = document.querySelector("#cat-eye-r .cat-pupil");
+  const leftIris   = document.querySelector("#cat-eye-l .cat-iris");
+  const rightIris  = document.querySelector("#cat-eye-r .cat-iris");
+
+  if (!catHead) return;
+
+  document.addEventListener("mousemove", e => {
+    const rect = catHead.getBoundingClientRect();
+    const catX = rect.left + rect.width / 2;
+    const catY = rect.top + rect.height / 2;
+
+    const angle = Math.atan2(e.clientY - catY, e.clientX - catX);
+    const dist  = Math.min(Math.hypot(e.clientX - catX, e.clientY - catY) / 12, 3.5);
+
+    const moveX = Math.cos(angle) * dist;
+    const moveY = Math.sin(angle) * dist;
+
+    if (leftPupil)  leftPupil.style.transform  = `translate(${moveX}px, ${moveY}px)`;
+    if (rightPupil) rightPupil.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    if (leftIris)   leftIris.style.transform   = `translate(${moveX * 0.5}px, ${moveY * 0.5}px)`;
+    if (rightIris)  rightIris.style.transform  = `translate(${moveX * 0.5}px, ${moveY * 0.5}px)`;
+  });
 }
 
 /* ── Shortcuts rendering ─────────────────────────────── */
@@ -294,10 +331,8 @@ document.addEventListener("DOMContentLoaded", () => {
     settings  = Object.assign({ showShortcuts: true, maxRows: 3 }, res.ytabSettings || {});
 
     renderShortcuts();
-    renderAppearanceUI();
-
-    const theme = res.userTheme || { mode: "dark", color: "#0d1b2e" };
-    applyTheme(theme.mode, theme.color);
+    renderCatPicker();
+    initCatMouseTracking();
 
     // Apply show-shortcuts toggle state
     const showToggle = document.getElementById("show-shortcuts-toggle");
@@ -311,17 +346,6 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ── Sidebar toggle ─────────────────────────────────── */
   document.getElementById("sidebar-toggle").onclick = () => sidebar.classList.add("active");
   document.getElementById("close-sidebar").onclick  = () => sidebar.classList.remove("active");
-
-  /* ── Theme mode buttons ─────────────────────────────── */
-  document.querySelectorAll(".segmented-control button").forEach(btn => {
-    btn.onclick = () => {
-      const mode = btn.dataset.mode;
-      chrome.storage.local.get(["userTheme"], res => {
-        const color = res.userTheme?.color || (mode === "light" ? "#ffffff" : "#0d1b2e");
-        applyTheme(mode, color);
-      });
-    };
-  });
 
   /* ── Show shortcuts toggle ──────────────────────────── */
   document.getElementById("show-shortcuts-toggle")?.addEventListener("change", e => {

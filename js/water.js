@@ -42,7 +42,7 @@ function saveState() {
 }
 
 // ── DOM helpers ───────────────────────────────────────────────
-function getWidget() { return document.getElementById("water-widget"); }
+function getWidget() { return document.getElementById("water-popup"); }
 
 function renderDots() {
   const container = document.getElementById("sip-dots");
@@ -170,16 +170,28 @@ function initWaterReminder() {
   if (!w) return;
 
   // Wire up buttons
-  document.getElementById("log-sip-btn").addEventListener("click", logSip);
+  document.getElementById("log-sip-btn")?.addEventListener("click", logSip);
 
-  document.getElementById("dismiss-water-btn").addEventListener("click", () => {
+  document.getElementById("water-popup-close")?.addEventListener("click", () => {
     hideWidget(true);
-    showSnoozeMsg("⏰ See you in 30 min, stay hydrated!");
   });
 
-  // Load today's data, show immediately, then schedule repeats
+  // Cat click opens water popup
+  document.getElementById("cat-widget")?.addEventListener("click", () => {
+    const pop = document.getElementById("water-popup");
+    if (pop) {
+      if (pop.classList.contains("hidden")) {
+        showWidget();
+      } else {
+        hideWidget(true);
+      }
+    }
+  });
+
+  // Load today's data and schedule reminder badge
   loadState(() => {
-    showWidget();
+    renderDots();
+    updateCountLabel();
     scheduleReminder();
   });
 }
