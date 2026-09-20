@@ -11,22 +11,21 @@
     />
   </head>
   <body>
+
+    <!-- ── SHORTCUTS ───────────────────────────────── -->
     <div class="container">
       <div id="shortcuts-grid" class="shortcuts-grid"></div>
     </div>
 
-    <!-- Customize FAB -->
+    <!-- ── CUSTOMIZE FAB ───────────────────────────── -->
     <button id="sidebar-toggle" class="customize-fab">
       <svg viewBox="0 0 24 24" width="18">
-        <path
-          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-          fill="currentColor"
-        />
+        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
       </svg>
-      <span>Customize Chrome</span>
+      <span>Customize</span>
     </button>
 
-    <!-- Sidebar -->
+    <!-- ── SIDEBAR ──────────────────────────────────── -->
     <aside id="customizer-sidebar" class="chrome-sidebar">
       <div class="sidebar-header">
         <h2>Customize this page</h2>
@@ -34,6 +33,8 @@
       </div>
 
       <div class="sidebar-scroll-content">
+
+        <!-- Appearance -->
         <div class="sidebar-panel">
           <section class="appearance-section">
             <label class="section-label">Appearance</label>
@@ -43,45 +44,53 @@
               <button data-mode="device" id="btn-device">Device</button>
             </div>
           </section>
-
           <section class="appearance-section">
             <label class="section-label">Colors</label>
             <div class="theme-grid" id="theme-presets"></div>
           </section>
-
-          <section class="follow-colors-row">
-            <span>Follow device colors</span>
-            <label class="switch">
-              <input type="checkbox" id="device-color-toggle" />
-              <span class="slider"></span>
-            </label>
-          </section>
-          <button class="action-btn-outline">Change wallpaper</button>
         </div>
 
-        <div class="sidebar-panel mini-panel">
-          <span>Toolbar</span>
-          <svg viewBox="0 0 24 24" width="16">
-            <path
-              d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-
-        <div class="sidebar-panel mini-panel">
-          <div class="flex-between">
+        <!-- Shortcuts settings -->
+        <div class="sidebar-panel">
+          <label class="section-label">Shortcuts</label>
+          <div class="flex-between" style="margin-bottom:14px">
             <span>Show shortcuts</span>
             <label class="switch">
-              <input type="checkbox" checked />
+              <input type="checkbox" id="show-shortcuts-toggle" checked />
               <span class="slider"></span>
             </label>
           </div>
+          <div class="flex-between">
+            <span style="font-size:13px">Max rows</span>
+            <div class="row-stepper">
+              <button id="rows-minus" class="stepper-btn">−</button>
+              <span id="rows-value">3</span>
+              <button id="rows-plus" class="stepper-btn">+</button>
+            </div>
+          </div>
         </div>
+
+        <!-- Water Buddy / Cat picker -->
+        <div class="sidebar-panel">
+          <label class="section-label">Water Buddy 💧</label>
+          <p class="section-sub">Choose your hydration companion</p>
+          <div class="cat-picker-grid" id="cat-picker"></div>
+        </div>
+
+        <!-- Export / Import -->
+        <div class="sidebar-panel">
+          <label class="section-label">Shortcuts Data</label>
+          <div class="data-actions">
+            <button id="export-btn" class="action-btn-outline">⬇ Export Shortcuts</button>
+            <button id="import-btn" class="action-btn-outline">⬆ Import Shortcuts</button>
+            <input type="file" id="import-file" accept=".json" class="hidden" />
+          </div>
+        </div>
+
       </div>
     </aside>
 
-    <!-- FIXED Shortcut Modal -->
+    <!-- ── SHORTCUT MODAL ──────────────────────────── -->
     <div id="modal-overlay" class="modal-overlay hidden">
       <div class="modal-box">
         <h3>Edit shortcut</h3>
@@ -103,37 +112,83 @@
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════
-         WATER REMINDER WIDGET
-         ═══════════════════════════════════════════════════ -->
-    <div id="water-widget" class="water-widget hidden">
-
-      <!-- GIF banner -->
-      <div class="water-gif-wrap">
-        <img
-          src="https://media.giphy.com/media/6zzIipmh15d0XXQbSG/giphy.gif"
-          alt="Stay Hydrated!"
-        />
-        <span class="water-gif-label">STAY HYDRATED 💧</span>
+    <!-- ══════════════════════════════════════════════
+         CAT WATER WIDGET  (bottom-right)
+         ══════════════════════════════════════════════ -->
+    <div id="cat-widget" class="cat-widget cat-gray">
+      <div class="cat-body">
+        <div class="cat-head">
+          <!-- Inner ear pinks -->
+          <div class="cat-inner-ear left"></div>
+          <div class="cat-inner-ear right"></div>
+          <!-- Eyes -->
+          <div class="cat-eye left" id="cat-eye-l">
+            <div class="cat-iris"></div>
+            <div class="cat-pupil"></div>
+          </div>
+          <div class="cat-eye right" id="cat-eye-r">
+            <div class="cat-iris"></div>
+            <div class="cat-pupil"></div>
+          </div>
+          <!-- Nose + mouth -->
+          <div class="cat-nose"></div>
+          <div class="cat-mouth"></div>
+          <!-- Whiskers -->
+          <div class="whisker wl1"></div>
+          <div class="whisker wl2"></div>
+          <div class="whisker wr1"></div>
+          <div class="whisker wr2"></div>
+        </div>
+        <div class="cat-torso"></div>
+        <div class="cat-tail"></div>
       </div>
+      <!-- Pulsing water badge when reminder is due -->
+      <div class="cat-reminder-badge" id="cat-badge">💧</div>
+      <!-- Tooltip hint -->
+      <div class="cat-tooltip">Click me! 💧</div>
+    </div>
 
-      <!-- Info block -->
-      <p class="water-title">💧 Hydration Check-in!</p>
-      <p class="water-sub">You&apos;ve had <span id="sip-count">0</span> sips today</p>
-
-      <!-- Streak dots -->
-      <p class="sip-streak-label">Today&apos;s streak</p>
+    <!-- Water popup (shown on cat click) -->
+    <div id="water-popup" class="water-popup hidden">
+      <div class="water-popup-header">
+        <span>💧 Hydration Check-in!</span>
+        <button id="water-popup-close" class="water-popup-close">×</button>
+      </div>
+      <p class="water-sub">You've had <span id="sip-count">0</span> sips today</p>
+      <p class="sip-streak-label">Today's streak</p>
       <div class="sip-dots" id="sip-dots"></div>
-
-      <!-- Actions -->
       <div class="water-actions">
         <button id="log-sip-btn" class="btn-log-sip">💧 Log a Sip</button>
-        <button id="dismiss-water-btn" class="btn-dismiss-water">Dismiss</button>
       </div>
+    </div>
 
+    <!-- ══════════════════════════════════════════════
+         PROGRESS RING WIDGET  (bottom-left)
+         ══════════════════════════════════════════════ -->
+    <div id="progress-widget" class="progress-widget" title="Tasks">
+      <svg class="progress-ring-svg" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+        <circle class="ring-bg"   cx="26" cy="26" r="21"/>
+        <circle class="ring-fill" cx="26" cy="26" r="21" id="ring-fill"/>
+      </svg>
+      <span class="ring-pct" id="ring-pct">✓</span>
+    </div>
+
+    <!-- Task panel -->
+    <div id="task-panel" class="task-panel hidden">
+      <div class="task-panel-header">
+        <span>📋 Today's Tasks</span>
+        <button id="task-panel-close" class="task-panel-close">×</button>
+      </div>
+      <div class="task-add-row">
+        <input type="text" id="task-input" placeholder="Add a task…" maxlength="80" />
+        <button id="task-add-btn" class="task-add-btn">+</button>
+      </div>
+      <div id="task-list" class="task-list"></div>
     </div>
 
     <script src="js/main.js"></script>
+    <script src="js/cat.js"></script>
     <script src="js/water.js"></script>
+    <script src="js/progress.js"></script>
   </body>
 </html>
