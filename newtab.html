@@ -9,6 +9,8 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
       rel="stylesheet"
     />
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
   </head>
   <body>
 
@@ -19,9 +21,7 @@
 
     <!-- ── CUSTOMIZE FAB ───────────────────────────── -->
     <button id="sidebar-toggle" class="customize-fab">
-      <svg viewBox="0 0 24 24" width="18">
-        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
-      </svg>
+      <i data-lucide="sliders-horizontal" style="width:16px;height:16px;"></i>
       <span>Customize</span>
     </button>
 
@@ -149,14 +149,13 @@
     </div>
 
     <!-- ══════════════════════════════════════════════
-         PROGRESS RING WIDGET  (bottom-left)
+         PROGRESS TRACKER WIDGET  (top-right)
          ══════════════════════════════════════════════ -->
-    <div id="progress-widget" class="progress-widget" title="Tasks">
-      <svg class="progress-ring-svg" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-        <circle class="ring-bg"   cx="26" cy="26" r="21"/>
-        <circle class="ring-fill" cx="26" cy="26" r="21" id="ring-fill"/>
-      </svg>
-      <span class="ring-pct" id="ring-pct">✓</span>
+    <div id="progress-widget" class="progress-widget" title="Today's Tasks">
+      <div class="progress-icon-circle">
+        <i data-lucide="check-square" class="progress-main-icon"></i>
+      </div>
+      <span class="ring-pct" id="ring-pct">0%</span>
     </div>
 
     <!-- Task panel -->

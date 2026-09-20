@@ -23,30 +23,23 @@ function saveTasks() {
 }
 
 function updateProgressRing() {
-  const ringFill = document.getElementById("ring-fill");
-  const ringPct  = document.getElementById("ring-pct");
+  const ringPct = document.getElementById("ring-pct");
+  if (!ringPct) return;
 
   if (!tasks.length) {
-    if (ringFill) ringFill.style.strokeDashoffset = "131.95";
-    if (ringPct)  ringPct.textContent = "0%";
+    ringPct.textContent = "0%";
+    ringPct.classList.remove("complete");
     return;
   }
 
   const completed = tasks.filter(t => t.done).length;
   const pct = Math.round((completed / tasks.length) * 100);
 
-  // Circumference = 2 * PI * 21 ≈ 131.95
-  const maxDash = 131.95;
-  const offset  = maxDash - (pct / 100) * maxDash;
-
-  if (ringFill) {
-    ringFill.style.strokeDashoffset = String(offset);
-    if (pct === 100) ringFill.classList.add("complete");
-    else ringFill.classList.remove("complete");
-  }
-
-  if (ringPct) {
-    ringPct.textContent = pct === 100 ? "✓" : `${pct}%`;
+  ringPct.textContent = pct === 100 ? "✓" : `${pct}%`;
+  if (pct === 100) {
+    ringPct.classList.add("complete");
+  } else {
+    ringPct.classList.remove("complete");
   }
 }
 
@@ -138,6 +131,9 @@ function initProgress() {
 
   loadTasks(() => {
     updateProgressRing();
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   });
 }
 

@@ -1232,12 +1232,12 @@ input:checked + .slider:before {
 .cat-purple { --cf:#ce93d8; --cd:#ab47bc; --ci:#fce4ec; --ce:#ec407a; }
 
 /* ====================================================
-   CAT WIDGET  (CSS-drawn, top-left)
+   CAT WIDGET  (top-right, rightmost)
    ==================================================== */
 .cat-widget {
   position: fixed;
   top: 18px;
-  left: 18px;
+  right: 18px;
   width: 65px;
   z-index: 850;
   cursor: pointer;
@@ -1247,30 +1247,12 @@ input:checked + .slider:before {
 }
 
 /* ====================================================
-   PROGRESS RING WIDGET  (top-left, next to cat)
-   ==================================================== */
-.progress-widget {
-  position: fixed;
-  top: 24px;
-  left: 95px;
-  width: 54px;
-  height: 54px;
-  cursor: pointer;
-  z-index: 850;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
-}
-
-/* ====================================================
-   WATER POPUP CARD  (below cat top-left)
+   WATER POPUP CARD  (below cat top-right)
    ==================================================== */
 .water-popup {
   position: fixed;
   top: 95px;
-  left: 18px;
+  right: 18px;
   width: 276px;
   background: rgba(8, 20, 48, 0.94);
   backdrop-filter: blur(22px) saturate(180%);
@@ -1284,12 +1266,12 @@ input:checked + .slider:before {
 }
 
 /* ====================================================
-   TASK PANEL  (below progress widget top-left)
+   TASK PANEL  (below progress widget top-right)
    ==================================================== */
 .task-panel {
   position: fixed;
   top: 90px;
-  left: 95px;
+  right: 95px;
   width: 264px;
   max-height: 370px;
   background: rgba(8, 18, 42, 0.95);
@@ -1298,6 +1280,7 @@ input:checked + .slider:before {
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 18px;
   padding: 14px;
+}
 .cat-widget:hover { filter: drop-shadow(0 8px 20px rgba(96,191,255,0.3)); }
 
 /* Breathing idle animation */
@@ -1580,43 +1563,69 @@ input:checked + .slider:before {
   box-shadow: 0 0 0 3px rgba(138,180,248,0.15);
 }
 
-.progress-widget:hover { transform: scale(1.12); }
-.progress-widget:active { transform: scale(0.95); }
-
-.progress-ring-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+.progress-widget {
+  position: fixed;
+  top: 18px;
+  right: 95px;
+  width: 52px;
+  height: 52px;
+  background: rgba(15, 28, 56, 0.75);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1.5px solid rgba(96, 191, 255, 0.35);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 850;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s, box-shadow 0.25s;
 }
 
-.ring-bg {
-  fill: rgba(255,255,255,0.05);
-  stroke: rgba(255,255,255,0.1);
-  stroke-width: 4.5;
+.progress-widget:hover {
+  transform: scale(1.1);
+  border-color: rgba(96, 191, 255, 0.7);
+  box-shadow: 0 10px 30px rgba(96, 191, 255, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
-.ring-fill {
-  fill: none;
-  stroke: #60bfff;
-  stroke-width: 4.5;
-  stroke-linecap: round;
-  stroke-dasharray: 131.95;   /* 2π × 21 */
-  stroke-dashoffset: 131.95;  /* starts at 0% */
-  transform: rotate(-90deg);
-  transform-origin: 26px 26px;
-  transition: stroke-dashoffset 0.7s cubic-bezier(0.4,0,0.2,1), stroke 0.4s;
+
+.progress-widget:active {
+  transform: scale(0.95);
 }
-.ring-fill.complete { stroke: #69f0ae; }
+
+.progress-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #60bfff;
+  transition: color 0.3s;
+}
+
+.progress-main-icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.2;
+}
 
 .ring-pct {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  bottom: -4px;
+  right: -6px;
+  background: linear-gradient(135deg, #1a73e8, #60bfff);
+  color: #ffffff;
   font-size: 10px;
   font-weight: 700;
-  color: rgba(255,255,255,0.9);
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1.5px solid #060d1a;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   pointer-events: none;
-  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.ring-pct.complete {
+  background: linear-gradient(135deg, #00c853, #69f0ae);
+  color: #061a0d;
 }
 
 /* ====================================================
