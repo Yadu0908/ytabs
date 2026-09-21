@@ -19,62 +19,7 @@
       <div id="shortcuts-grid" class="shortcuts-grid"></div>
     </div>
 
-    <!-- ── CUSTOMIZE FAB ───────────────────────────── -->
-    <button id="sidebar-toggle" class="customize-fab">
-      <i data-lucide="sliders-horizontal" style="width:16px;height:16px;"></i>
-      <span>Customize</span>
-    </button>
 
-    <!-- ── SIDEBAR ──────────────────────────────────── -->
-    <aside id="customizer-sidebar" class="chrome-sidebar">
-      <div class="sidebar-header">
-        <h2>Customize this page</h2>
-        <button id="close-sidebar" class="close-btn">&times;</button>
-      </div>
-
-      <div class="sidebar-scroll-content">
-
-
-
-        <!-- Shortcuts settings -->
-        <div class="sidebar-panel">
-          <label class="section-label">Shortcuts</label>
-          <div class="flex-between" style="margin-bottom:14px">
-            <span>Show shortcuts</span>
-            <label class="switch">
-              <input type="checkbox" id="show-shortcuts-toggle" checked />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="flex-between">
-            <span style="font-size:13px">Max rows</span>
-            <div class="row-stepper">
-              <button id="rows-minus" class="stepper-btn">−</button>
-              <span id="rows-value">3</span>
-              <button id="rows-plus" class="stepper-btn">+</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Water Buddy / Cat picker -->
-        <div class="sidebar-panel">
-          <label class="section-label">Water Buddy 💧</label>
-          <p class="section-sub">Choose your hydration companion</p>
-          <div class="cat-picker-grid" id="cat-picker"></div>
-        </div>
-
-        <!-- Export / Import -->
-        <div class="sidebar-panel">
-          <label class="section-label">Shortcuts Data</label>
-          <div class="data-actions">
-            <button id="export-btn" class="action-btn-outline">⬇ Export Shortcuts</button>
-            <button id="import-btn" class="action-btn-outline">⬆ Import Shortcuts</button>
-            <input type="file" id="import-file" accept=".json" class="hidden" />
-          </div>
-        </div>
-
-      </div>
-    </aside>
 
     <!-- ── SHORTCUT MODAL ──────────────────────────── -->
     <div id="modal-overlay" class="modal-overlay hidden">
@@ -98,81 +43,6 @@
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════
-         CAT WATER WIDGET  (bottom-right)
-         ══════════════════════════════════════════════ -->
-    <div id="cat-widget" class="cat-widget cat-gray">
-      <div class="cat-body">
-        <div class="cat-head">
-          <!-- Inner ear pinks -->
-          <div class="cat-inner-ear left"></div>
-          <div class="cat-inner-ear right"></div>
-          <!-- Eyes -->
-          <div class="cat-eye left" id="cat-eye-l">
-            <div class="cat-iris"></div>
-            <div class="cat-pupil"></div>
-          </div>
-          <div class="cat-eye right" id="cat-eye-r">
-            <div class="cat-iris"></div>
-            <div class="cat-pupil"></div>
-          </div>
-          <!-- Nose + mouth -->
-          <div class="cat-nose"></div>
-          <div class="cat-mouth"></div>
-          <!-- Whiskers -->
-          <div class="whisker wl1"></div>
-          <div class="whisker wl2"></div>
-          <div class="whisker wr1"></div>
-          <div class="whisker wr2"></div>
-        </div>
-        <div class="cat-torso"></div>
-        <div class="cat-tail"></div>
-      </div>
-      <!-- Pulsing water badge when reminder is due -->
-      <div class="cat-reminder-badge" id="cat-badge">💧</div>
-      <!-- Tooltip hint -->
-      <div class="cat-tooltip">Click me! 💧</div>
-    </div>
-
-    <!-- Water popup (shown on cat click) -->
-    <div id="water-popup" class="water-popup hidden">
-      <div class="water-popup-header">
-        <span>💧 Hydration Check-in!</span>
-        <button id="water-popup-close" class="water-popup-close">×</button>
-      </div>
-      <p class="water-sub">You've had <span id="sip-count">0</span> sips today</p>
-      <p class="sip-streak-label">Today's streak</p>
-      <div class="sip-dots" id="sip-dots"></div>
-      <div class="water-actions">
-        <button id="log-sip-btn" class="btn-log-sip">💧 Log a Sip</button>
-      </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════
-         PROGRESS TRACKER WIDGET  (top-right)
-         ══════════════════════════════════════════════ -->
-    <div id="progress-widget" class="progress-widget" title="Today's Tasks">
-      <div class="progress-icon-circle">
-        <i data-lucide="check-square" class="progress-main-icon"></i>
-      </div>
-      <span class="ring-pct" id="ring-pct">0%</span>
-    </div>
-
-    <!-- Task panel -->
-    <div id="task-panel" class="task-panel hidden">
-      <div class="task-panel-header">
-        <span>📋 Today's Tasks</span>
-        <button id="task-panel-close" class="task-panel-close">×</button>
-      </div>
-      <div class="task-add-row">
-        <input type="text" id="task-input" placeholder="Add a task…" maxlength="80" />
-        <button id="task-add-btn" class="task-add-btn">+</button>
-      </div>
-      <div id="task-list" class="task-list"></div>
-    </div>
-
     <script src="js/main.js"></script>
-    <script src="js/water.js"></script>
-    <script src="js/progress.js"></script>
   </body>
 </html>

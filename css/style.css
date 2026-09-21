@@ -126,6 +126,12 @@ body::after {
 .container {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 1100px;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ====================================================
@@ -135,56 +141,69 @@ body::after {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 35px;
+  gap: 20px 24px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .shortcut-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 90px;
-  padding: 10px 0;
-  cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 78px;
+  padding: 6px 0;
+  cursor: pointer !important;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
+  user-select: none;
 }
 
 .shortcut-item:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px) scale(1.03);
 }
 
 .icon-box {
-  width: 64px;
-  height: 64px;
-  background: var(--tile-bg);
+  width: 54px;
+  height: 54px;
+  background: rgba(30, 45, 69, 0.7);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.05);
-  transition: box-shadow 0.3s, background 0.3s;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
 }
 
 .shortcut-item:hover .icon-box {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(138,180,248,0.2);
-  background: color-mix(in srgb, var(--tile-bg) 85%, white 15%);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5), 0 0 0 1.5px rgba(138, 180, 248, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: rgba(45, 65, 98, 0.85);
+  border-color: rgba(138, 180, 248, 0.3);
 }
 
 .icon-box img {
-  width: 32px;
-  height: 32px;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.shortcut-item:hover .icon-box img {
+  transform: scale(1.08);
 }
 
 .label {
-  font-size: 13px;
+  font-size: 12px;
   text-align: center;
-  color: #c7c7c7;
+  color: #e2e8f0;
   font-weight: 500;
-  letter-spacing: 0.3px;
-  opacity: 1;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  letter-spacing: 0.2px;
+  opacity: 0.95;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -194,8 +213,8 @@ body::after {
 /* Plus Icon inside the grid */
 .add-btn .icon-box svg {
   color: #ffffff;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
 }
 
 /* ====================================================
@@ -1769,12 +1788,16 @@ input:checked + .slider:before {
 /* ====================================================
    DRAG AND DROP STYLES
    ==================================================== */
-.shortcut-item[draggable="true"] { cursor: grab; }
-.shortcut-item[draggable="true"]:active { cursor: grabbing; }
+.shortcut-item[draggable="true"],
+.shortcut-item[draggable="true"]:active,
+.shortcut-item[draggable="true"]:hover {
+  cursor: pointer !important;
+}
 
 .shortcut-item.dragging {
-  opacity: 0.35;
-  transform: scale(0.9);
+  opacity: 0.45;
+  transform: scale(0.96);
+  cursor: pointer !important;
 }
 .shortcut-item.drag-over .icon-box {
   box-shadow: 0 0 0 2.5px var(--accent), 0 8px 24px rgba(0,0,0,0.5);
@@ -1831,5 +1854,51 @@ input:checked + .slider:before {
   animation: slideUpFade 0.3s ease forwards;
   white-space: nowrap;
   pointer-events: none;
+}
+
+/* ====================================================
+   RESPONSIVE BREAKPOINTS
+   ==================================================== */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  .shortcuts-grid {
+    gap: 16px 18px;
+  }
+  .shortcut-item {
+    width: 72px;
+  }
+  .icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    margin-bottom: 6px;
+  }
+  .icon-box img {
+    width: 24px;
+    height: 24px;
+  }
+  .label {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .shortcuts-grid {
+    gap: 12px 14px;
+  }
+  .shortcut-item {
+    width: 64px;
+  }
+  .icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+  .icon-box img {
+    width: 22px;
+    height: 22px;
+  }
 }
 

@@ -12,7 +12,8 @@
 let shortcuts = [];
 let editingIndex = null;
 let settings = { showShortcuts: true, maxRows: 3 };
-let dragSrcIndex = null;
+const grid  = document.getElementById("shortcuts-grid");
+const modal = document.getElementById("modal-overlay");
 
 const NEW_PLUS_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
   <path d="M0 0h24v24H0z" fill="none"/>
@@ -20,118 +21,6 @@ const NEW_PLUS_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height
 </svg>`;
 
 const DOTS_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
-
-const themePresets = [
-  { c1: "#0d1b2e", c2: "#1a2540", c3: "#1e2d45", c4: "#060d1a" },
-  { c1: "#202124", c2: "#28292c", c3: "#3c4043", c4: "#1a1a1a" },
-  { c1: "#2b3648", c2: "#354052", c3: "#313a49", c4: "#242626" },
-  { c1: "#ffffff", c2: "#f8f9fa", c3: "#f1f3f4", c4: "#dee1e6" },
-  { c1: "#1a73e8", c2: "#d2e3fc", c3: "#e8f0fe", c4: "#185abc" },
-  { c1: "#0d652d", c2: "#e6f4ea", c3: "#ceead6", c4: "#073d1c" },
-  { c1: "#a50e0e", c2: "#fce8e6", c3: "#fad2cf", c4: "#610808" },
-  { c1: "#e37400", c2: "#feefe3", c3: "#fdd0b5", c4: "#8c4b00" },
-  { c1: "#af52de", c2: "#f3e8fd", c3: "#e1bee7", c4: "#2d1a38" },
-  { c1: "#007b83", c2: "#e0f2f1", c3: "#b2dfdb", c4: "#004a4f" },
-  { c1: "#ff8bcb", c2: "#fce8f3", c3: "#f8bbd0", c4: "#3a1a2a" },
-  { c1: "#424242", c2: "#f5f5f5", c3: "#eeeeee", c4: "#212121" },
-];
-
-const sidebar   = document.getElementById("customizer-sidebar");
-const grid      = document.getElementById("shortcuts-grid");
-const themeGrid = document.getElementById("theme-presets");
-const modal     = document.getElementById("modal-overlay");
-
-/* ── Theme ───────────────────────────────────────────── */
-function applyTheme(mode, color) {
-  let targetMode = mode;
-  if (mode === "device") {
-    targetMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  }
-  const preset = themePresets.find(p => p.c1.toLowerCase() === color.toLowerCase());
-  const sidebarColor = preset ? preset.c2 : color;
-  const tileColor    = preset ? preset.c3 : "rgba(128,128,128,0.2)";
-  const outerColor   = preset ? preset.c4 : "#1a1a1a";
-
-  document.documentElement.setAttribute("data-theme", targetMode);
-  document.documentElement.style.setProperty("--bg-color",    color);
-  document.documentElement.style.setProperty("--side-bg",     sidebarColor);
-  document.documentElement.style.setProperty("--tile-bg",     tileColor);
-  document.documentElement.style.setProperty("--outer-shell", outerColor);
-
-  document.querySelectorAll(".segmented-control button").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.mode === mode);
-  });
-  document.querySelectorAll(".theme-box-wrapper").forEach(wrapper => {
-    wrapper.classList.toggle("active", wrapper.dataset.color === color);
-  });
-  chrome.storage.local.set({ userTheme: { mode, color } });
-}
-
-const catCharacters = [
-  { id: "cat-gray",   emoji: "🐱", name: "Gray Cat" },
-  { id: "cat-orange", emoji: "🐈", name: "Orange Tabby" },
-  { id: "cat-black",  emoji: "🐈‍⬛", name: "Black Cat" },
-  { id: "cat-white",  emoji: "🤍", name: "White Cat" },
-  { id: "cat-purple", emoji: "🍇", name: "Purple Cat" }
-];
-
-function renderCatPicker() {
-  const container = document.getElementById("cat-picker");
-  if (!container) return;
-  container.innerHTML = "";
-
-  chrome.storage.local.get(["selectedCat"], res => {
-    const current = res.selectedCat || "cat-gray";
-    applyCatClass(current);
-
-    catCharacters.forEach(cat => {
-      const btn = document.createElement("button");
-      btn.className = `cat-pick-item ${cat.id === current ? "active" : ""}`;
-      btn.innerHTML = cat.emoji;
-      btn.title = cat.name;
-      btn.onclick = () => {
-        document.querySelectorAll(".cat-pick-item").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        applyCatClass(cat.id);
-        chrome.storage.local.set({ selectedCat: cat.id });
-      };
-      container.appendChild(btn);
-    });
-  });
-}
-
-function applyCatClass(catId) {
-  const catW = document.getElementById("cat-widget");
-  if (!catW) return;
-  catW.className = `cat-widget ${catId}`;
-}
-
-function initCatMouseTracking() {
-  const catHead = document.querySelector(".cat-head");
-  const leftPupil  = document.querySelector("#cat-eye-l .cat-pupil");
-  const rightPupil = document.querySelector("#cat-eye-r .cat-pupil");
-  const leftIris   = document.querySelector("#cat-eye-l .cat-iris");
-  const rightIris  = document.querySelector("#cat-eye-r .cat-iris");
-
-  if (!catHead) return;
-
-  document.addEventListener("mousemove", e => {
-    const rect = catHead.getBoundingClientRect();
-    const catX = rect.left + rect.width / 2;
-    const catY = rect.top + rect.height / 2;
-
-    const angle = Math.atan2(e.clientY - catY, e.clientX - catX);
-    const dist  = Math.min(Math.hypot(e.clientX - catX, e.clientY - catY) / 12, 3.5);
-
-    const moveX = Math.cos(angle) * dist;
-    const moveY = Math.sin(angle) * dist;
-
-    if (leftPupil)  leftPupil.style.transform  = `translate(${moveX}px, ${moveY}px)`;
-    if (rightPupil) rightPupil.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    if (leftIris)   leftIris.style.transform   = `translate(${moveX * 0.5}px, ${moveY * 0.5}px)`;
-    if (rightIris)  rightIris.style.transform  = `translate(${moveX * 0.5}px, ${moveY * 0.5}px)`;
-  });
-}
 
 /* ── Shortcuts rendering ─────────────────────────────── */
 function renderShortcuts() {
@@ -212,9 +101,6 @@ function renderShortcuts() {
     grid.appendChild(div);
   });
 
-  // Apply max-rows height limit
-  applyRowLimit();
-
   // Add shortcut button (not draggable)
   const addBtn = document.createElement("div");
   addBtn.className = "shortcut-item add-btn";
@@ -223,69 +109,8 @@ function renderShortcuts() {
   grid.appendChild(addBtn);
 }
 
-function applyRowLimit() {
-  const firstItem = grid.querySelector(".shortcut-item");
-  if (!firstItem) return;
-  const itemH = firstItem.offsetHeight || 110;
-  const gapH  = 35;
-  grid.style.maxHeight = `${settings.maxRows * (itemH + gapH)}px`;
-  grid.style.overflow  = "hidden";
-}
-
 function escHtml(str) {
   return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-
-/* ── Show shortcuts toggle ───────────────────────────── */
-function applyShowShortcuts(show) {
-  settings.showShortcuts = show;
-  const container = document.querySelector(".container");
-  if (container) container.style.display = show ? "" : "none";
-}
-
-/* ── Row stepper UI ──────────────────────────────────── */
-function updateRowsDisplay() {
-  const el = document.getElementById("rows-value");
-  if (el) el.textContent = settings.maxRows;
-}
-
-/* ── Export Shortcuts ────────────────────────────────── */
-function exportShortcuts() {
-  if (!shortcuts.length) { showToast("⚠️ No shortcuts to export"); return; }
-  const data   = JSON.stringify(shortcuts, null, 2);
-  const blob   = new Blob([data], { type: "application/json" });
-  const url    = URL.createObjectURL(blob);
-  const a      = document.createElement("a");
-  a.href       = url;
-  a.download   = "ytabs-shortcuts.json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast("✅ Shortcuts exported!");
-}
-
-/* ── Import Shortcuts ────────────────────────────────── */
-function handleImport(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const imported = JSON.parse(ev.target.result);
-      if (Array.isArray(imported) && imported.every(s => s.name && s.url)) {
-        shortcuts = imported;
-        chrome.storage.local.set({ myShortcuts: shortcuts }, () => {
-          renderShortcuts();
-          showToast(`✅ Imported ${shortcuts.length} shortcuts!`);
-        });
-      } else {
-        showToast("❌ Invalid file format");
-      }
-    } catch {
-      showToast("❌ Error reading file");
-    }
-  };
-  reader.readAsText(file);
 }
 
 /* ── Toast helper ────────────────────────────────────── */
@@ -325,63 +150,16 @@ function openModal(i) {
 
 /* ── DOMContentLoaded ────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
-  // Load everything from storage at once
-  chrome.storage.local.get(["myShortcuts","userTheme","ytabSettings"], res => {
-    shortcuts = res.myShortcuts || [{ name: "GitHub", url: "https://github.com" }];
-    settings  = Object.assign({ showShortcuts: true, maxRows: 3 }, res.ytabSettings || {});
-
+  chrome.storage.local.get(["myShortcuts"], res => {
+    shortcuts = res.myShortcuts || [
+      { name: "YouTube", url: "https://youtube.com" },
+      { name: "GitHub",  url: "https://github.com" },
+      { name: "Gmail",   url: "https://mail.google.com" }
+    ];
     renderShortcuts();
-    renderCatPicker();
-    initCatMouseTracking();
-
-    // Apply show-shortcuts toggle state
-    const showToggle = document.getElementById("show-shortcuts-toggle");
-    if (showToggle) {
-      showToggle.checked = settings.showShortcuts;
-      applyShowShortcuts(settings.showShortcuts);
-    }
-    updateRowsDisplay();
   });
 
-  /* ── Sidebar toggle ─────────────────────────────────── */
-  document.getElementById("sidebar-toggle").onclick = () => sidebar.classList.add("active");
-  document.getElementById("close-sidebar").onclick  = () => sidebar.classList.remove("active");
-
-  /* ── Show shortcuts toggle ──────────────────────────── */
-  document.getElementById("show-shortcuts-toggle")?.addEventListener("change", e => {
-    settings.showShortcuts = e.target.checked;
-    applyShowShortcuts(settings.showShortcuts);
-    chrome.storage.local.set({ ytabSettings: settings });
-  });
-
-  /* ── Row stepper ────────────────────────────────────── */
-  document.getElementById("rows-minus")?.addEventListener("click", () => {
-    if (settings.maxRows <= 1) return;
-    settings.maxRows--;
-    updateRowsDisplay();
-    applyRowLimit();
-    chrome.storage.local.set({ ytabSettings: settings });
-  });
-  document.getElementById("rows-plus")?.addEventListener("click", () => {
-    if (settings.maxRows >= 6) return;
-    settings.maxRows++;
-    updateRowsDisplay();
-    applyRowLimit();
-    chrome.storage.local.set({ ytabSettings: settings });
-  });
-
-  /* ── Export / Import ────────────────────────────────── */
-  document.getElementById("export-btn")?.addEventListener("click", exportShortcuts);
-
-  document.getElementById("import-btn")?.addEventListener("click", () => {
-    document.getElementById("import-file").click();
-  });
-  document.getElementById("import-file")?.addEventListener("change", e => {
-    handleImport(e.target.files[0]);
-    e.target.value = "";
-  });
-
-  /* ── Modal save ─────────────────────────────────────── */
+  /* ── Modal save / delete / cancel ───────────────────── */
   document.getElementById("modal-save").onclick = () => {
     const n = document.getElementById("modal-name").value.trim();
     let   u = document.getElementById("modal-url").value.trim();
