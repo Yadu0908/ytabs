@@ -157,6 +157,75 @@ function openModal(i) {
   nIn.focus();
 }
 
+/* ── Export / Import Shortcuts ────────────────────────── */
+function exportShortcuts() {
+  if (!shortcuts || !shortcuts.length) {
+    showToast("No shortcuts to export!");
+    return;
+  }
+  const data = JSON.stringify(shortcuts, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = "ytabs-shortcuts.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Shortcuts exported successfully!");
+}
+
+function handleImport(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (Array.isArray(imported) && imported.every(s => s.name && s.url)) {
+        shortcuts = imported;
+        chrome.storage.local.set({ myShortcuts: shortcuts }, () => {
+          renderShortcuts();
+          showToast(`Imported ${shortcuts.length} shortcuts!`);
+        });
+      } else {
+        showToast("Invalid file format!");
+      }
+    } catch {
+      showToast("Error reading JSON file!");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function showToast(msg) {
+  const old = document.getElementById("ytab-toast");
+  if (old) old.remove();
+
+  const toast = document.createElement("div");
+  toast.id = "ytab-toast";
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    background: #2b2b2b;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #ffffff;
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: opacity 0.3s ease;
+  `;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 300);
+  }, 2200);
+}
+
 /* ── Initialization ──────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.local.get(["myShortcuts"], res => {
@@ -170,6 +239,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderRandomQuote();
+
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+
+  /* ── Export & Import Listeners ───────────────────────── */
+  document.getElementById("export-btn")?.addEventListener("click", exportShortcuts);
+  document.getElementById("import-btn")?.addEventListener("click", () => {
+    document.getElementById("import-file").click();
+  });
+  document.getElementById("import-file")?.addEventListener("change", e => {
+    handleImport(e.target.files[0]);
+    e.target.value = "";
+  });
 
   /* ── Modal Listeners ────────────────────────────────── */
   document.getElementById("modal-save").onclick = () => {
