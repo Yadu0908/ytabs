@@ -1,67 +1,82 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Tab</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-  </head>
-  <body>
 
-    <!-- ── SHORTCUTS ───────────────────────────────── -->
-    <div class="container">
-      <div id="shortcuts-grid" class="shortcuts-grid"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Tab</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <!-- ── SHORTCUTS ───────────────────────────────── -->
+  <div class="container">
+    <div id="shortcuts-grid" class="shortcuts-grid"></div>
+  </div>
+
+  <!-- ── MOTIVATIONAL QUOTE ──────────────────────── -->
+  <div class="quote-container" id="quote-container">
+    <p class="quote-text" id="quote-text"></p>
+    <span class="quote-author" id="quote-author"></span>
+  </div>
+
+  <!-- ── DATA ACTIONS (Export / Import) ───────────── -->
+  <div class="data-actions-bar">
+    <button id="export-btn" class="data-btn" title="Export Shortcuts (JSON)">
+      <i data-lucide="download" style="width:14px;height:14px;"></i>
+      <span>Export</span>
+    </button>
+    <button id="import-btn" class="data-btn" title="Import Shortcuts (JSON)">
+      <i data-lucide="upload" style="width:14px;height:14px;"></i>
+      <span>Import</span>
+    </button>
+  </div>
+
+  <!-- ── IMPORT MODAL ──────────────────────────── -->
+  <div id="import-modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box import-modal-box">
+      <h3>Import Shortcuts</h3>
+      <p class="import-desc">Select a JSON file containing your shortcuts.</p>
+      
+      <div id="drop-zone" class="drop-zone">
+        <i data-lucide="upload-cloud" style="width:32px;height:32px;margin-bottom:12px;color:#a3a3a3;"></i>
+        <span>Drag & Drop JSON file here<br>or click to browse</span>
+        <input type="file" id="import-file" accept=".json" style="display:none;" />
+      </div>
+
+      <div class="modal-actions" style="justify-content:flex-end;">
+        <button id="import-cancel" class="btn-stroke">Cancel</button>
+      </div>
     </div>
+  </div>
 
-    <!-- ── MOTIVATIONAL QUOTE ──────────────────────── -->
-    <div class="quote-container" id="quote-container">
-      <p class="quote-text" id="quote-text"></p>
-      <span class="quote-author" id="quote-author"></span>
-    </div>
-
-    <!-- ── DATA ACTIONS (Export / Import) ───────────── -->
-    <div class="data-actions-bar">
-      <button id="export-btn" class="data-btn" title="Export Shortcuts (JSON)">
-        <i data-lucide="download" style="width:14px;height:14px;"></i>
-        <span>Export</span>
-      </button>
-      <button id="import-btn" class="data-btn" title="Import Shortcuts (JSON)">
-        <i data-lucide="upload" style="width:14px;height:14px;"></i>
-        <span>Import</span>
-      </button>
-      <input type="file" id="import-file" accept=".json" style="display:none;" />
-    </div>
-
-
-
-    <!-- ── SHORTCUT MODAL ──────────────────────────── -->
-    <div id="modal-overlay" class="modal-overlay hidden">
-      <div class="modal-box">
-        <h3>Edit shortcut</h3>
-        <div class="modal-field">
-          <label>Name</label>
-          <input type="text" id="modal-name" autocomplete="off" />
-        </div>
-        <div class="modal-field">
-          <label>URL</label>
-          <input type="url" id="modal-url" autocomplete="off" />
-        </div>
-        <div class="modal-actions">
-          <button id="modal-delete" class="btn-flat btn-danger">Remove</button>
-          <div class="right-btns">
-            <button id="modal-cancel" class="btn-stroke">Cancel</button>
-            <button id="modal-save" class="btn-solid">Done</button>
-          </div>
+  <!-- ── SHORTCUT MODAL ──────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3>Edit shortcut</h3>
+      <div class="modal-field">
+        <label>Name</label>
+        <input type="text" id="modal-name" autocomplete="off" />
+      </div>
+      <div class="modal-field">
+        <label>URL</label>
+        <input type="url" id="modal-url" autocomplete="off" />
+      </div>
+      <div class="modal-actions">
+        <button id="modal-delete" class="btn-flat btn-danger">Remove</button>
+        <div class="right-btns">
+          <button id="modal-cancel" class="btn-stroke">Cancel</button>
+          <button id="modal-save" class="btn-solid">Done</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <script src="js/main.js"></script>
-  </body>
+  <script src="js/main.js"></script>
+</body>
+
 </html>

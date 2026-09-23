@@ -187,6 +187,7 @@ function handleImport(file) {
         chrome.storage.local.set({ myShortcuts: shortcuts }, () => {
           renderShortcuts();
           showToast(`Imported ${shortcuts.length} shortcuts!`);
+          document.getElementById("import-modal-overlay")?.classList.add("hidden");
         });
       } else {
         showToast("Invalid file format!");
@@ -246,11 +247,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ── Export & Import Listeners ───────────────────────── */
   document.getElementById("export-btn")?.addEventListener("click", exportShortcuts);
+  
+  const importModal = document.getElementById("import-modal-overlay");
+  const dropZone = document.getElementById("drop-zone");
+  const importFile = document.getElementById("import-file");
+
   document.getElementById("import-btn")?.addEventListener("click", () => {
-    document.getElementById("import-file").click();
+    importModal?.classList.remove("hidden");
   });
-  document.getElementById("import-file")?.addEventListener("change", e => {
-    handleImport(e.target.files[0]);
+  
+  document.getElementById("import-cancel")?.addEventListener("click", () => {
+    importModal?.classList.add("hidden");
+  });
+
+  dropZone?.addEventListener("click", () => {
+    importFile?.click();
+  });
+
+  dropZone?.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  });
+
+  dropZone?.addEventListener("dragleave", () => {
+    dropZone.classList.remove("dragover");
+  });
+
+  dropZone?.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    if (e.dataTransfer.files.length) {
+      handleImport(e.dataTransfer.files[0]);
+    }
+  });
+
+  importFile?.addEventListener("change", e => {
+    if (e.target.files.length) {
+      handleImport(e.target.files[0]);
+    }
     e.target.value = "";
   });
 
