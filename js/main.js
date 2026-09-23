@@ -1,36 +1,60 @@
 /* ============================================================
-   main.js — Core logic for YTab 2.0 New Tab Extension
+   main.js — Minimal logic for YTab Extension
    Features:
-   - Shortcut rendering + editing (add/remove/edit)
-   - Drag-and-drop reordering
-   - Show shortcuts toggle + max-row limit
-   - Theme / colour picker
-   - Export & Import shortcuts (JSON)
+   - Single line shortcut rendering + edit/add/delete
+   - Pointer cursor drag-and-drop reordering
+   - Random motivational quote at bottom center
    ============================================================ */
 
 /* ── Data ────────────────────────────────────────────── */
 let shortcuts = [];
 let editingIndex = null;
-let settings = { showShortcuts: true, maxRows: 3 };
+let dragSrcIndex = null;
+
 const grid  = document.getElementById("shortcuts-grid");
 const modal = document.getElementById("modal-overlay");
 
-const NEW_PLUS_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+const NEW_PLUS_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
   <path d="M0 0h24v24H0z" fill="none"/>
   <path fill="currentColor" d="M11.5 12.5h-5q-.213 0-.356-.144T6 11.999t.144-.356t.356-.143h5v-5q0-.213.144-.356T12.001 6t.356.144t.143.356v5h5q.213 0 .356.144t.144.357t-.144.356t-.356.143h-5v5q0 .213-.144.356t-.357.144t-.356-.144t-.143-.356z"/>
 </svg>`;
 
-const DOTS_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
+const DOTS_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
 
-/* ── Shortcuts rendering ─────────────────────────────── */
+const MOTIVATIONAL_QUOTES = [
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+  { text: "Don't count the days, make the days count.", author: "Muhammad Ali" },
+  { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma" },
+  { text: "Focus on being productive instead of busy.", author: "Tim Ferriss" },
+  { text: "Action is the foundational key to all success.", author: "Pablo Picasso" },
+  { text: "Your time is limited, so don't waste it living someone else's life.", author: "Steve Jobs" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "Start where you are. Use what you have. Do what you can.", author: "Arthur Ashe" },
+  { text: "Consistency is what transforms average into excellence.", author: "Anonymous" }
+];
+
+/* ── Render Motivational Quote ───────────────────────── */
+function renderRandomQuote() {
+  const quoteContainer = document.getElementById("quote-container");
+  const quoteText = document.getElementById("quote-text");
+  const quoteAuthor = document.getElementById("quote-author");
+
+  if (!quoteContainer || !quoteText || !quoteAuthor) return;
+
+  const randomQuote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+  quoteText.textContent = `"${randomQuote.text}"`;
+  quoteAuthor.textContent = `— ${randomQuote.author}`;
+
+  setTimeout(() => {
+    quoteContainer.classList.add("visible");
+  }, 100);
+}
+
+/* ── Shortcuts Rendering ─────────────────────────────── */
 function renderShortcuts() {
   if (!grid) return;
   grid.innerHTML = "";
-
-  const container = document.querySelector(".container");
-  if (container) {
-    container.style.display = settings.showShortcuts ? "" : "none";
-  }
 
   shortcuts.forEach((s, index) => {
     const div = document.createElement("div");
@@ -45,22 +69,22 @@ function renderShortcuts() {
       <div class="label">${escHtml(s.name)}</div>
     `;
 
-    // Navigate on click
+    // Click to navigate
     div.onclick = e => {
       if (e.target.closest(".edit-dots")) return;
       window.location.href = s.url;
     };
 
-    // Edit dots
+    // Edit dots click
     div.querySelector(".edit-dots").onclick = e => {
       e.stopPropagation();
       openModal(index);
     };
 
-    // Right-click
+    // Context menu edit
     div.oncontextmenu = e => { e.preventDefault(); openModal(index); };
 
-    // ─── Drag and drop ───────────────────────────────────
+    // ── Drag and drop ──────────────────────────────────────
     div.addEventListener("dragstart", e => {
       dragSrcIndex = index;
       div.classList.add("dragging");
@@ -101,7 +125,7 @@ function renderShortcuts() {
     grid.appendChild(div);
   });
 
-  // Add shortcut button (not draggable)
+  // Add shortcut button (+)
   const addBtn = document.createElement("div");
   addBtn.className = "shortcut-item add-btn";
   addBtn.innerHTML = `<div class="icon-box">${NEW_PLUS_ICON}</div><div class="label">Add shortcut</div>`;
@@ -110,31 +134,16 @@ function renderShortcuts() {
 }
 
 function escHtml(str) {
-  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-/* ── Toast helper ────────────────────────────────────── */
-function showToast(text) {
-  const old = document.getElementById("ytab-toast");
-  if (old) old.remove();
-  const t = document.createElement("div");
-  t.id = "ytab-toast";
-  t.className = "ytab-toast";
-  t.textContent = text;
-  document.body.appendChild(t);
-  setTimeout(() => {
-    t.style.opacity = "0";
-    t.style.transition = "opacity 0.4s";
-    setTimeout(() => t.remove(), 400);
-  }, 2400);
-}
-
-/* ── Modal ───────────────────────────────────────────── */
+/* ── Modal Dialog ────────────────────────────────────── */
 function openModal(i) {
   editingIndex = i;
-  const nIn   = document.getElementById("modal-name");
-  const uIn   = document.getElementById("modal-url");
+  const nIn    = document.getElementById("modal-name");
+  const uIn    = document.getElementById("modal-url");
   const delBtn = document.getElementById("modal-delete");
+
   if (i !== null) {
     nIn.value = shortcuts[i].name;
     uIn.value = shortcuts[i].url;
@@ -148,18 +157,21 @@ function openModal(i) {
   nIn.focus();
 }
 
-/* ── DOMContentLoaded ────────────────────────────────── */
+/* ── Initialization ──────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.local.get(["myShortcuts"], res => {
     shortcuts = res.myShortcuts || [
-      { name: "YouTube", url: "https://youtube.com" },
-      { name: "GitHub",  url: "https://github.com" },
-      { name: "Gmail",   url: "https://mail.google.com" }
+      { name: "Reddit",    url: "https://reddit.com" },
+      { name: "Github",    url: "https://github.com" },
+      { name: "Claude",    url: "https://claude.ai" },
+      { name: "Youtube",   url: "https://youtube.com" }
     ];
     renderShortcuts();
   });
 
-  /* ── Modal save / delete / cancel ───────────────────── */
+  renderRandomQuote();
+
+  /* ── Modal Listeners ────────────────────────────────── */
   document.getElementById("modal-save").onclick = () => {
     const n = document.getElementById("modal-name").value.trim();
     let   u = document.getElementById("modal-url").value.trim();
@@ -182,5 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   };
+
   document.getElementById("modal-cancel").onclick = () => modal.classList.add("hidden");
 });
