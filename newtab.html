@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>New Tab</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" /> -->
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -41,11 +41,19 @@
     <div class="modal-box import-modal-box">
       <h3>Import Shortcuts</h3>
       <p class="import-desc">Select a JSON file containing your shortcuts.</p>
-      
+
       <div id="drop-zone" class="drop-zone">
-        <i data-lucide="upload-cloud" style="width:32px;height:32px;margin-bottom:12px;color:#a3a3a3;"></i>
-        <span>Drag & Drop JSON file here<br>or click to browse</span>
-        <input type="file" id="import-file" accept=".json" style="display:none;" />
+        <div class="upload-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+            <path d="M12 12v9"></path>
+            <path d="M16 16l-4-4-4 4"></path>
+          </svg>
+        </div>
+        <span class="drop-text">Drag & Drop JSON file here<br>or click to browse</span>
+        <input type="file" id="import-file" accept=".json"
+          style="opacity:0; position:absolute; width:0; height:0; z-index:-1;" placeholder="Upload Shortcuts" />
       </div>
 
       <div class="modal-actions" style="justify-content:flex-end;">

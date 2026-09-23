@@ -20,6 +20,19 @@ body {
   position: relative;
 }
 
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
 /* ====================================================
    SHORTCUTS CONTAINER & SINGLE LINE GRID
    ==================================================== */
@@ -36,21 +49,25 @@ body {
 
 .shortcuts-grid {
   display: flex;
-  flex-wrap: nowrap; /* Forces single line */
+  flex-wrap: nowrap;
+  /* Forces single line */
   justify-content: center;
   align-items: center;
   gap: 20px;
   width: 100%;
-  overflow-x: auto; /* Allows smooth horizontal scrolling if many shortcuts */
+  overflow-x: auto;
+  /* Allows smooth horizontal scrolling if many shortcuts */
   padding: 10px 0;
 }
 
 .shortcuts-grid::-webkit-scrollbar {
   height: 4px;
 }
+
 .shortcuts-grid::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .shortcuts-grid::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
@@ -61,7 +78,8 @@ body {
   flex-direction: column;
   align-items: center;
   width: 76px;
-  flex-shrink: 0; /* Keeps single line structure */
+  flex-shrink: 0;
+  /* Keeps single line structure */
   padding: 6px 0;
   cursor: pointer !important;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -298,7 +316,7 @@ body {
 .drop-zone {
   border: 2px dashed rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  padding: 40px 20px;
+  padding: 30px 20px;
   background: #1e1e1e;
   color: #a3a3a3;
   font-size: 13px;
@@ -307,20 +325,45 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
 }
 
-.drop-zone:hover, .drop-zone.dragover {
+.drop-zone:hover,
+.drop-zone.dragover {
   border-color: #3b82f6;
   background: #252d3a;
   color: #ffffff;
 }
 
+.upload-icon-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.drop-zone:hover .upload-icon-wrapper,
+.drop-zone.dragover .upload-icon-wrapper {
+  background: rgba(59, 130, 246, 0.15);
+}
+
 .drop-zone svg {
+  color: #a3a3a3;
   transition: color 0.2s;
 }
 
-.drop-zone:hover svg, .drop-zone.dragover svg {
+.drop-zone:hover svg,
+.drop-zone.dragover svg {
   color: #3b82f6 !important;
+}
+
+.drop-text {
+  line-height: 1.5;
 }
 
 .modal-box h3 {
@@ -417,17 +460,21 @@ body {
   .shortcuts-grid {
     gap: 12px;
   }
+
   .shortcut-item {
     width: 68px;
   }
+
   .icon-box {
     width: 46px;
     height: 46px;
   }
+
   .icon-box img {
     width: 22px;
     height: 22px;
   }
+
   .quote-text {
     font-size: 12px;
   }
