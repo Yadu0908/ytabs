@@ -7,26 +7,22 @@
       "theme_ntp_background": "theme_ntp_background.png"
     },
     "colors": {
+      "frame": [27, 27, 27],
+      "frame_inactive": [32, 32, 32],
+      "toolbar": [27, 27, 27],
+      "ntp_background": [27, 27, 27],
 
-      "frame": [24, 51, 77],
-      "frame_inactive": [28, 40, 60],
-      "toolbar": [24, 51, 77],
-      "ntp_background": [24, 51, 77],
+      "omnibox_background": [38, 38, 38],
+      "omnibox_text": [240, 240, 240],
+      "toolbar_text": [240, 240, 240],
+      "toolbar_button_icon": [200, 200, 200],
 
+      "tab_text": [240, 240, 240],
+      "tab_background_text": [160, 160, 160],
+      "bookmark_text": [240, 240, 240],
 
-      "omnibox_background": [40, 65, 90],
-      "omnibox_text": [255, 255, 255],
-      "toolbar_text": [255, 255, 255],
-      "toolbar_button_icon": [255, 255, 255],
-
-
-      "tab_text": [255, 255, 255],
-      "tab_background_text": [180, 190, 200],
-      "bookmark_text": [255, 255, 255],
-
-
-      "ntp_text": [255, 255, 255],
-      "ntp_link": [138, 180, 248]
+      "ntp_text": [240, 240, 240],
+      "ntp_link": [59, 130, 246]
     },
     "tints": {
       "buttons": [0, 0, 1]
