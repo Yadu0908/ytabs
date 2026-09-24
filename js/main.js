@@ -254,12 +254,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const hue = res.bgHue !== undefined ? res.bgHue : 220;
     const noise = res.bgNoise !== undefined ? res.bgNoise : true;
     const showQuote = res.showQuote !== undefined ? res.showQuote : true;
+    const themeDark = res.themeDark !== undefined ? res.themeDark : true;
+    const layout = res.layout !== undefined ? res.layout : "single";
     
     document.documentElement.style.setProperty("--bg-hue", hue);
-    document.documentElement.style.setProperty("--bg-noise-opacity", noise ? 0.05 : 0);
+    document.documentElement.style.setProperty("--bg-noise-opacity", noise ? (themeDark ? 0.05 : 0.12) : 0);
     document.getElementById("hue-slider").value = hue;
     document.getElementById("noise-toggle").checked = noise;
     document.getElementById("quote-toggle").checked = showQuote;
+    document.getElementById("theme-toggle").checked = themeDark;
+    document.getElementById("layout-select").value = layout;
+
+    if (!themeDark) document.body.classList.add("light-mode");
+    if (layout === "wrap") document.getElementById("shortcuts-grid").classList.add("multi-row");
   });
 
   renderRandomQuote();
@@ -292,6 +299,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const val = e.target.checked;
     document.documentElement.style.setProperty("--bg-noise-opacity", val ? 0.05 : 0);
     chrome.storage.local.set({ bgNoise: val });
+  });
+
+  document.getElementById("theme-toggle")?.addEventListener("change", (e) => {
+    const val = e.target.checked;
+    chrome.storage.local.set({ themeDark: val });
+    const noise = document.getElementById("noise-toggle").checked;
+    if (val) {
+      document.body.classList.remove("light-mode");
+      document.documentElement.style.setProperty("--bg-noise-opacity", noise ? 0.05 : 0);
+    } else {
+      document.body.classList.add("light-mode");
+      document.documentElement.style.setProperty("--bg-noise-opacity", noise ? 0.12 : 0);
+    }
+  });
+
+  document.getElementById("layout-select")?.addEventListener("change", (e) => {
+    const val = e.target.value;
+    chrome.storage.local.set({ layout: val });
+    const grid = document.getElementById("shortcuts-grid");
+    if (val === "wrap") grid.classList.add("multi-row");
+    else grid.classList.remove("multi-row");
   });
 
   document.getElementById("quote-toggle")?.addEventListener("change", (e) => {

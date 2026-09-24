@@ -9,13 +9,33 @@
 
 :root {
   --bg-hue: 220;
-  --bg-color: hsl(var(--bg-hue), 10%, 12%);
+  --bg-sat: 10%;
+  --bg-lit: 12%;
+  --bg-color: hsl(var(--bg-hue), var(--bg-sat), var(--bg-lit));
   --bg-noise-opacity: 0.05;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --panel-bg: #242424;
+  --item-bg: #262626;
+  --item-bg-hover: #333333;
+  --border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.light-mode {
+  --bg-sat: 30%;
+  --bg-lit: 93%;
+  --bg-noise-opacity: 0.12;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --panel-bg: #ffffff;
+  --item-bg: #f1f5f9;
+  --item-bg-hover: #e2e8f0;
+  --border-color: rgba(0, 0, 0, 0.1);
 }
 
 body {
   background: var(--bg-color);
-  color: #e2e8f0;
+  color: var(--text-primary);
   font-family: "Roboto", -apple-system, BlinkMacSystemFont, sans-serif;
   height: 100vh;
   display: flex;
@@ -70,6 +90,11 @@ body::before {
   scrollbar-width: none;
 }
 
+.shortcuts-grid.multi-row {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .shortcuts-grid::-webkit-scrollbar {
   display: none;
 }
@@ -95,20 +120,20 @@ body::before {
 .icon-box {
   width: 64px;
   height: 64px;
-  background: #262626;
+  background: var(--item-bg);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .shortcut-item:hover .icon-box {
-  background: #333333;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--item-bg-hover);
+  border-color: var(--text-secondary);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -125,7 +150,7 @@ body::before {
 .label {
   font-size: 11.5px;
   text-align: center;
-  color: #a3a3a3;
+  color: var(--text-secondary);
   font-weight: 400;
   letter-spacing: 0.2px;
   width: 100%;
@@ -136,19 +161,19 @@ body::before {
 }
 
 .shortcut-item:hover .label {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 /* Plus Icon inside the grid */
 .add-btn .icon-box svg {
-  color: #a3a3a3;
+  color: var(--text-secondary);
   width: 24px;
   height: 24px;
   transition: color 0.2s ease;
 }
 
 .add-btn:hover .icon-box svg {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 /* Three dots edit button */
@@ -313,8 +338,8 @@ body::before {
 }
 
 .modal-box {
-  background: #242424;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   width: 340px;
   padding: 24px;
@@ -481,9 +506,9 @@ body::before {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: #242424;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #a3a3a3;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -496,8 +521,8 @@ body::before {
 }
 
 .settings-btn:hover {
-  background: #2e2e2e;
-  color: #ffffff;
+  background: var(--item-bg-hover);
+  color: var(--text-primary);
   transform: rotate(30deg);
 }
 
@@ -507,8 +532,8 @@ body::before {
   right: -320px;
   width: 300px;
   height: calc(100vh - 40px);
-  background: #242424;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
   z-index: 100;
@@ -528,19 +553,19 @@ body::before {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-header h3 {
   font-size: 14px;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .close-btn {
   background: transparent;
   border: none;
-  color: #a3a3a3;
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -549,7 +574,18 @@ body::before {
 }
 
 .close-btn:hover {
-  color: #ffffff;
+  color: var(--text-primary);
+}
+
+.sidebar-select {
+  background: var(--item-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 10px;
+  outline: none;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .setting-row {
