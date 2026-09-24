@@ -40,8 +40,8 @@ body::before {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1200px;
-  padding: 20px;
+  max-width: 100%;
+  padding: 20px 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,34 +50,28 @@ body::before {
 .shortcuts-grid {
   display: flex;
   flex-wrap: nowrap;
-  /* Forces single line */
-  justify-content: center;
+  /* Items start at left to prevent cutoff */
+  justify-content: flex-start;
   align-items: center;
   gap: 20px;
-  width: 100%;
+  /* Safe centering: grid shrinks to fit content, then parent centers it. Max 100% to allow scrolling */
+  width: max-content;
+  max-width: 100%;
   overflow-x: auto;
-  /* Allows smooth horizontal scrolling if many shortcuts */
-  padding: 10px 0;
+  padding: 15px 10px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .shortcuts-grid::-webkit-scrollbar {
-  height: 4px;
-}
-
-.shortcuts-grid::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.shortcuts-grid::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  display: none;
 }
 
 .shortcut-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 76px;
+  width: 84px;
   flex-shrink: 0;
   /* Keeps single line structure */
   padding: 6px 0;
@@ -92,14 +86,14 @@ body::before {
 }
 
 .icon-box {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   background: #262626;
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   border: 1px solid rgba(255, 255, 255, 0.07);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -112,8 +106,8 @@ body::before {
 }
 
 .icon-box img {
-  width: 26px;
-  height: 26px;
+  width: 36px;
+  height: 36px;
   transition: transform 0.2s ease;
 }
 
@@ -153,12 +147,12 @@ body::before {
 /* Three dots edit button */
 .edit-dots {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 22px;
-  height: 22px;
+  top: 0px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: transparent;
+  background: rgba(30, 30, 30, 0.9);
   color: #a3a3a3;
   display: flex;
   align-items: center;
@@ -462,17 +456,17 @@ body::before {
   }
 
   .shortcut-item {
-    width: 68px;
+    width: 74px;
   }
 
   .icon-box {
-    width: 46px;
-    height: 46px;
+    width: 56px;
+    height: 56px;
   }
 
   .icon-box img {
-    width: 22px;
-    height: 22px;
+    width: 32px;
+    height: 32px;
   }
 
   .quote-text {

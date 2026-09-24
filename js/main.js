@@ -241,10 +241,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderRandomQuote();
 
-  if (window.lucide) {
-    window.lucide.createIcons();
-  }
-
   /* ── Export & Import Listeners ───────────────────────── */
   document.getElementById("export-btn")?.addEventListener("click", exportShortcuts);
   
