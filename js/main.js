@@ -46,9 +46,12 @@ function renderRandomQuote() {
   quoteText.textContent = `"${randomQuote.text}"`;
   quoteAuthor.textContent = `— ${randomQuote.author}`;
 
-  setTimeout(() => {
-    quoteContainer.classList.add("visible");
-  }, 100);
+  chrome.storage.local.get(["showQuote"], res => {
+    const show = res.showQuote !== undefined ? res.showQuote : true;
+    if (show) {
+      setTimeout(() => quoteContainer.classList.add("visible"), 100);
+    }
+  });
 }
 
 /* ── Shortcuts Rendering ─────────────────────────────── */
@@ -118,7 +121,15 @@ function renderShortcuts() {
       if (dragSrcIndex !== null && dragSrcIndex !== index) {
         const [moved] = shortcuts.splice(dragSrcIndex, 1);
         shortcuts.splice(index, 0, moved);
-        chrome.storage.local.set({ myShortcuts: shortcuts }, () => renderShortcuts());
+        chrome.storage.local.set({ myShortcuts: shortcuts }, () => {
+          renderShortcuts();
+          // Add drop animation to the moved element
+          const allItems = document.querySelectorAll('.shortcut-item[data-index]');
+          if (allItems[index]) {
+            allItems[index].classList.add('pop-drop');
+            setTimeout(() => allItems[index].classList.remove('pop-drop'), 400);
+          }
+        });
       }
     });
 
@@ -229,7 +240,8 @@ function showToast(msg) {
 
 /* ── Initialization ──────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
-  chrome.storage.local.get(["myShortcuts"], res => {
+  // Load shortcuts
+  chrome.storage.local.get(["myShortcuts", "bgHue", "bgNoise"], res => {
     shortcuts = res.myShortcuts || [
       { name: "Reddit",    url: "https://reddit.com" },
       { name: "Github",    url: "https://github.com" },
@@ -237,9 +249,58 @@ document.addEventListener("DOMContentLoaded", () => {
       { name: "Youtube",   url: "https://youtube.com" }
     ];
     renderShortcuts();
+    
+    // Apply Settings
+    const hue = res.bgHue !== undefined ? res.bgHue : 220;
+    const noise = res.bgNoise !== undefined ? res.bgNoise : true;
+    const showQuote = res.showQuote !== undefined ? res.showQuote : true;
+    
+    document.documentElement.style.setProperty("--bg-hue", hue);
+    document.documentElement.style.setProperty("--bg-noise-opacity", noise ? 0.05 : 0);
+    document.getElementById("hue-slider").value = hue;
+    document.getElementById("noise-toggle").checked = noise;
+    document.getElementById("quote-toggle").checked = showQuote;
   });
 
   renderRandomQuote();
+
+  /* ── Settings Sidebar Listeners ────────────────────── */
+  const sidebar = document.getElementById("settings-sidebar");
+  const settingsBtn = document.getElementById("settings-btn");
+  
+  settingsBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    sidebar.classList.add("open");
+  });
+  
+  document.getElementById("close-sidebar")?.addEventListener("click", () => sidebar.classList.remove("open"));
+
+  // Close when clicking outside
+  document.addEventListener("click", (e) => {
+    if (sidebar.classList.contains("open") && !sidebar.contains(e.target) && !settingsBtn.contains(e.target)) {
+      sidebar.classList.remove("open");
+    }
+  });
+
+  document.getElementById("hue-slider")?.addEventListener("input", (e) => {
+    const val = e.target.value;
+    document.documentElement.style.setProperty("--bg-hue", val);
+    chrome.storage.local.set({ bgHue: val });
+  });
+
+  document.getElementById("noise-toggle")?.addEventListener("change", (e) => {
+    const val = e.target.checked;
+    document.documentElement.style.setProperty("--bg-noise-opacity", val ? 0.05 : 0);
+    chrome.storage.local.set({ bgNoise: val });
+  });
+
+  document.getElementById("quote-toggle")?.addEventListener("change", (e) => {
+    const val = e.target.checked;
+    chrome.storage.local.set({ showQuote: val });
+    const qc = document.getElementById("quote-container");
+    if (val) qc.classList.add("visible");
+    else qc.classList.remove("visible");
+  });
 
   /* ── Export & Import Listeners ───────────────────────── */
   document.getElementById("export-btn")?.addEventListener("click", exportShortcuts);
