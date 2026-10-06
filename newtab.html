@@ -26,105 +26,140 @@
   <!-- ── SETTINGS SIDEBAR ───────────────────────────── -->
   <div id="settings-sidebar" class="sidebar">
     <div class="sidebar-header">
-      <h3>Customize</h3>
-      <button id="close-sidebar" class="close-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
+      <div class="sidebar-title-group">
+        <h3>Customize</h3>
+        <span class="sidebar-subtitle">Preferences & Theme</span>
+      </div>
+      <button id="close-sidebar" class="close-btn" title="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg></button>
-    </div>
-
-    <!-- Theme Color Option -->
-    <div class="setting-section">
-      <div class="setting-row theme-setting-row">
-        <div class="setting-info">
-          <label>Theme Color</label>
-          <span class="setting-desc">Choose any color for your background</span>
-        </div>
-        <div class="color-picker-control" title="Click to choose custom color">
-          <input type="color" id="theme-color-picker" class="color-input" value="#121212" title="Choose custom color">
-          <span id="color-hex-label" class="color-hex-text">#121212</span>
-        </div>
-      </div>
-
-      <div class="color-presets-grid" id="color-presets">
-        <button type="button" class="color-preset-btn" data-color="#0b0a0a" title="Obsidian Black (#0b0a0a)"
-          style="--c: #0b0a0a;"></button>
-        <button type="button" class="color-preset-btn" data-color="#121212" title="Pitch Black"
-          style="--c: #121212;"></button>
-        <button type="button" class="color-preset-btn" data-color="#0f172a" title="Midnight Navy"
-          style="--c: #0f172a;"></button>
-        <button type="button" class="color-preset-btn" data-color="#06281e" title="Forest Night"
-          style="--c: #06281e;"></button>
-        <button type="button" class="color-preset-btn" data-color="#1e112a" title="Deep Plum"
-          style="--c: #1e112a;"></button>
-        <button type="button" class="color-preset-btn" data-color="#221510" title="Warm Mocha"
-          style="--c: #221510;"></button>
-        <button type="button" class="color-preset-btn" data-color="#240e17" title="Crimson Noir"
-          style="--c: #240e17;"></button>
-        <button type="button" class="color-preset-btn" data-color="#132438" title="Teal Abyss"
-          style="--c: #132438;"></button>
-        <button type="button" class="color-preset-btn" data-color="#f8fafc" title="Pure Light"
-          style="--c: #f8fafc;"></button>
-        <button type="button" class="color-preset-btn" data-color="#fdf6e2" title="Warm Sand"
-          style="--c: #fdf6e2;"></button>
-        <button type="button" class="color-preset-btn" data-color="#e0f2fe" title="Sky Pastels"
-          style="--c: #e0f2fe;"></button>
-        <button type="button" class="color-preset-btn custom-preset-trigger" id="custom-color-trigger"
-          title="Pick Custom Color">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <div class="setting-info">
-        <label>Layout</label>
-        <span class="setting-desc">Shortcuts display arrangement</span>
-      </div>
-      <select id="layout-select" class="sidebar-select">
-        <option value="single">Single Row</option>
-        <option value="wrap">Multiple Rows</option>
-      </select>
-    </div>
-
-    <div class="setting-row">
-      <div class="setting-info">
-        <label>Motivational Quote</label>
-        <span class="setting-desc">Show quote at the bottom of the screen</span>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="quote-toggle" checked>
-        <span class="slider round"></span>
-      </label>
-    </div>
-
-    <div class="sidebar-divider"></div>
-
-    <div class="sidebar-actions">
-      <button id="export-btn" class="data-btn" title="Export Shortcuts (JSON)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="7 10 12 15 17 10"></polyline>
-          <line x1="12" y1="15" x2="12" y2="3"></line>
         </svg>
-        <span>Export</span>
       </button>
-      <button id="import-btn" class="data-btn" title="Import Shortcuts (JSON)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="17 8 12 3 7 8"></polyline>
-          <line x1="12" y1="3" x2="12" y2="15"></line>
-        </svg>
-        <span>Import</span>
-      </button>
+    </div>
+
+    <div class="sidebar-content">
+      <!-- Section: Appearance -->
+      <div class="sidebar-section">
+        <span class="section-label">Appearance</span>
+
+        <div class="setting-card">
+          <div class="setting-card-header">
+            <div class="setting-info">
+              <label>Theme Color</label>
+              <span class="setting-desc">Choose any custom background color</span>
+            </div>
+          </div>
+
+          <!-- Color Picker Control (Left-anchored to prevent right clipping) -->
+          <div class="color-picker-card">
+            <div class="color-swatch-wrapper" id="color-swatch-trigger" title="Click to choose custom color">
+              <input type="color" id="theme-color-picker" class="color-input" value="#121212" title="Choose color">
+              <div class="color-swatch-display" id="color-swatch-display" style="background-color: #121212;"></div>
+              <span class="color-swatch-label">Choose Color</span>
+            </div>
+            <div class="color-hex-wrapper" title="Type or paste any hex color">
+              <span class="hex-hash">#</span>
+              <input type="text" id="color-hex-input" class="color-hex-input" value="121212" maxlength="6" spellcheck="false">
+            </div>
+          </div>
+
+          <!-- Preset Palette -->
+          <div class="presets-container">
+            <span class="presets-caption">Palette Presets</span>
+            <div class="color-presets-grid" id="color-presets">
+              <button type="button" class="color-preset-btn" data-color="#121212" title="Pitch Black"
+                style="--c: #121212;"></button>
+              <button type="button" class="color-preset-btn" data-color="#0b0a0a" title="Obsidian Black"
+                style="--c: #0b0a0a;"></button>
+              <button type="button" class="color-preset-btn" data-color="#0f172a" title="Midnight Navy"
+                style="--c: #0f172a;"></button>
+              <button type="button" class="color-preset-btn" data-color="#06281e" title="Forest Night"
+                style="--c: #06281e;"></button>
+              <button type="button" class="color-preset-btn" data-color="#1e112a" title="Deep Plum"
+                style="--c: #1e112a;"></button>
+              <button type="button" class="color-preset-btn" data-color="#221510" title="Warm Mocha"
+                style="--c: #221510;"></button>
+              <button type="button" class="color-preset-btn" data-color="#240e17" title="Crimson Noir"
+                style="--c: #240e17;"></button>
+              <button type="button" class="color-preset-btn" data-color="#132438" title="Teal Abyss"
+                style="--c: #132438;"></button>
+              <button type="button" class="color-preset-btn" data-color="#f8fafc" title="Pure Light"
+                style="--c: #f8fafc;"></button>
+              <button type="button" class="color-preset-btn" data-color="#fdf6e2" title="Warm Sand"
+                style="--c: #fdf6e2;"></button>
+              <button type="button" class="color-preset-btn" data-color="#e0f2fe" title="Sky Pastels"
+                style="--c: #e0f2fe;"></button>
+              <button type="button" class="color-preset-btn custom-preset-trigger" id="custom-color-trigger"
+                title="Pick Custom Color">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Layout & Display -->
+      <div class="sidebar-section">
+        <span class="section-label">Layout & Display</span>
+
+        <div class="setting-card">
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Shortcuts Layout</label>
+              <span class="setting-desc">Single row or multi-line grid</span>
+            </div>
+            <select id="layout-select" class="sidebar-select">
+              <option value="single">Single Row</option>
+              <option value="wrap">Multiple Rows</option>
+            </select>
+          </div>
+
+          <div class="setting-divider"></div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label>Motivational Quote</label>
+              <span class="setting-desc">Show inspiring quote at bottom</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="quote-toggle" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Backup -->
+      <div class="sidebar-section">
+        <span class="section-label">Shortcuts Data</span>
+
+        <div class="sidebar-actions">
+          <button id="export-btn" class="data-btn" title="Export Shortcuts (JSON)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Export</span>
+          </button>
+          <button id="import-btn" class="data-btn" title="Import Shortcuts (JSON)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <span>Import</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
