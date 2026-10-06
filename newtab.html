@@ -55,13 +55,18 @@
           <!-- Color Picker Control (Left-anchored to prevent right clipping) -->
           <div class="color-picker-card">
             <div class="color-swatch-wrapper" id="color-swatch-trigger" title="Click to choose custom color">
-              <input type="color" id="theme-color-picker" class="color-input" value="#121212" title="Choose color">
-              <div class="color-swatch-display" id="color-swatch-display" style="background-color: #121212;"></div>
-              <span class="color-swatch-label">Choose Color</span>
+              <div class="color-swatch-box">
+                <div class="color-swatch-display" id="color-swatch-display" style="background-color: #121212;"></div>
+                <input type="color" id="theme-color-picker" class="color-input" value="#121212" title="Choose color">
+              </div>
+              <div class="color-swatch-text-group">
+                <span class="color-swatch-label">Choose Color</span>
+                <span class="color-swatch-hint">Custom palette</span>
+              </div>
             </div>
             <div class="color-hex-wrapper" title="Type or paste any hex color">
               <span class="hex-hash">#</span>
-              <input type="text" id="color-hex-input" class="color-hex-input" value="121212" maxlength="6" spellcheck="false">
+              <input type="text" id="color-hex-input" class="color-hex-input" value="121212" maxlength="6" spellcheck="false" placeholder="121212">
             </div>
           </div>
 
