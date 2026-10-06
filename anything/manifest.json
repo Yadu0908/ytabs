@@ -4,24 +4,76 @@
   "name": "anything",
   "theme": {
     "colors": {
-      "frame": [27, 27, 27],
-      "frame_inactive": [27, 27, 27],
-      "toolbar": [27, 27, 27],
-      "ntp_background": [27, 27, 27],
-
-      "sidebar": [27, 27, 27],
-
-      "omnibox_background": [38, 38, 38],
-      "omnibox_text": [240, 240, 240],
-      "toolbar_text": [240, 240, 240],
-      "toolbar_button_icon": [200, 200, 200],
-
-      "tab_text": [240, 240, 240],
-      "tab_background_text": [160, 160, 160],
-      "bookmark_text": [240, 240, 240],
-
-      "ntp_text": [240, 240, 240],
-      "ntp_link": [59, 130, 246]
+      "frame": [
+        18,
+        18,
+        18
+      ],
+      "frame_inactive": [
+        18,
+        18,
+        18
+      ],
+      "toolbar": [
+        18,
+        18,
+        18
+      ],
+      "ntp_background": [
+        18,
+        18,
+        18
+      ],
+      "sidebar": [
+        18,
+        18,
+        18
+      ],
+      "omnibox_background": [
+        30,
+        30,
+        30
+      ],
+      "omnibox_text": [
+        240,
+        240,
+        240
+      ],
+      "toolbar_text": [
+        240,
+        240,
+        240
+      ],
+      "toolbar_button_icon": [
+        200,
+        200,
+        200
+      ],
+      "tab_text": [
+        240,
+        240,
+        240
+      ],
+      "tab_background_text": [
+        160,
+        160,
+        160
+      ],
+      "bookmark_text": [
+        240,
+        240,
+        240
+      ],
+      "ntp_text": [
+        240,
+        240,
+        240
+      ],
+      "ntp_link": [
+        59,
+        130,
+        246
+      ]
     }
   }
 }

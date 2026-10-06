@@ -54,6 +54,161 @@ function renderRandomQuote() {
   });
 }
 
+/* ── Ambient Icon Color Extraction ───────────────────── */
+const iconColorCache = new Map();
+
+const BRAND_COLORS = {
+  "youtube.com": [239, 68, 68],
+  "youtu.be": [239, 68, 68],
+  "reddit.com": [255, 69, 0],
+  "github.com": [139, 92, 246],
+  "claude.ai": [217, 119, 87],
+  "anthropic.com": [217, 119, 87],
+  "google.com": [59, 130, 246],
+  "twitter.com": [29, 155, 240],
+  "x.com": [148, 163, 184],
+  "spotify.com": [34, 197, 94],
+  "netflix.com": [229, 9, 20],
+  "twitch.tv": [145, 70, 255],
+  "discord.com": [88, 101, 242],
+  "amazon.com": [245, 158, 11],
+  "facebook.com": [24, 119, 242],
+  "instagram.com": [236, 72, 153],
+  "linkedin.com": [10, 102, 194],
+  "notion.so": [100, 116, 139],
+  "chatgpt.com": [16, 163, 127],
+  "openai.com": [16, 163, 127],
+  "stackoverflow.com": [244, 128, 36],
+  "wikipedia.org": [148, 163, 184]
+};
+
+function getHostname(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+function hslToRgb(h, s, l) {
+  s /= 100;
+  l /= 100;
+  const k = n => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+}
+
+function getFallbackColor(url) {
+  const host = getHostname(url);
+  for (const [domain, rgb] of Object.entries(BRAND_COLORS)) {
+    if (host.includes(domain)) return rgb;
+  }
+  let hash = 0;
+  for (let i = 0; i < host.length; i++) {
+    hash = host.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return hslToRgb(hue, 70, 52);
+}
+
+function extractDominantColor(imgSrc, fallbackRgb, callback) {
+  if (!imgSrc) {
+    callback(fallbackRgb);
+    return;
+  }
+
+  const tempImg = new Image();
+  if (imgSrc.startsWith("http://") || imgSrc.startsWith("https://")) {
+    tempImg.crossOrigin = "anonymous";
+  }
+
+  let finished = false;
+  const finish = rgb => {
+    if (!finished) {
+      finished = true;
+      callback(rgb || fallbackRgb);
+    }
+  };
+
+  const timeoutId = setTimeout(() => finish(fallbackRgb), 1200);
+
+  tempImg.onload = () => {
+    clearTimeout(timeoutId);
+    try {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      canvas.width = 32;
+      canvas.height = 32;
+      ctx.drawImage(tempImg, 0, 0, 32, 32);
+
+      const imgData = ctx.getImageData(0, 0, 32, 32).data;
+      let bestRgb = null;
+      let maxScore = -1;
+      let sumR = 0, sumG = 0, sumB = 0, count = 0;
+
+      for (let i = 0; i < imgData.length; i += 4) {
+        const r = imgData[i];
+        const g = imgData[i + 1];
+        const b = imgData[i + 2];
+        const a = imgData[i + 3];
+
+        if (a < 80) continue;
+        if (r > 240 && g > 240 && b > 240) continue;
+
+        const isNearBlack = r < 25 && g < 25 && b < 25;
+        sumR += r;
+        sumG += g;
+        sumB += b;
+        count++;
+
+        if (isNearBlack) continue;
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const saturation = max === 0 ? 0 : (max - min) / max;
+        const brightness = max / 255;
+
+        const score = saturation * 2.5 + (brightness > 0.25 && brightness < 0.95 ? 1 : 0.4);
+        if (score > maxScore) {
+          maxScore = score;
+          bestRgb = [r, g, b];
+        }
+      }
+
+      if (!bestRgb && count > 0) {
+        bestRgb = [
+          Math.round(sumR / count),
+          Math.round(sumG / count),
+          Math.round(sumB / count)
+        ];
+      }
+
+      finish(bestRgb || fallbackRgb);
+    } catch {
+      finish(fallbackRgb);
+    }
+  };
+
+  tempImg.onerror = () => {
+    clearTimeout(timeoutId);
+    finish(fallbackRgb);
+  };
+
+  tempImg.src = imgSrc;
+}
+
+function applyAmbientColor(iconBox, rgb) {
+  if (!iconBox || !rgb) return;
+  const [r, g, b] = rgb;
+  iconBox.style.setProperty("--icon-color", `rgba(${r}, ${g}, ${b}, 0.28)`);
+  iconBox.style.setProperty("--icon-color-subtle", `rgba(${r}, ${g}, ${b}, 0.08)`);
+  iconBox.style.setProperty("--icon-ambient-shadow", `rgba(${r}, ${g}, ${b}, 0.12)`);
+  iconBox.style.setProperty("--icon-ambient-hover", `rgba(${r}, ${g}, ${b}, 0.26)`);
+  iconBox.style.setProperty("--icon-border", `rgba(${r}, ${g}, ${b}, 0.14)`);
+  iconBox.style.setProperty("--icon-border-hover", `rgba(${r}, ${g}, ${b}, 0.35)`);
+}
+
 /* ── Shortcuts Rendering ─────────────────────────────── */
 function renderShortcuts() {
   if (!grid) return;
@@ -66,11 +221,32 @@ function renderShortcuts() {
     div.draggable = true;
 
     const icon = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(s.url)}&size=64`;
+    const initialRgb = iconColorCache.get(icon) || getFallbackColor(s.url);
+    const [r, g, b] = initialRgb;
+
     div.innerHTML = `
       <button class="edit-dots" title="Edit shortcut">${DOTS_ICON}</button>
-      <div class="icon-box"><img src="${icon}" alt=""></div>
+      <div class="icon-box" style="
+        --icon-color: rgba(${r}, ${g}, ${b}, 0.28);
+        --icon-color-subtle: rgba(${r}, ${g}, ${b}, 0.08);
+        --icon-ambient-shadow: rgba(${r}, ${g}, ${b}, 0.12);
+        --icon-ambient-hover: rgba(${r}, ${g}, ${b}, 0.26);
+        --icon-border: rgba(${r}, ${g}, ${b}, 0.14);
+        --icon-border-hover: rgba(${r}, ${g}, ${b}, 0.35);
+      ">
+        <div class="icon-ambient-glow"></div>
+        <img src="${icon}" alt="">
+      </div>
       <div class="label">${escHtml(s.name)}</div>
     `;
+
+    const iconBox = div.querySelector(".icon-box");
+    if (!iconColorCache.has(icon)) {
+      extractDominantColor(icon, initialRgb, rgb => {
+        iconColorCache.set(icon, rgb);
+        applyAmbientColor(iconBox, rgb);
+      });
+    }
 
     // Click to navigate
     div.onclick = e => {
@@ -139,7 +315,13 @@ function renderShortcuts() {
   // Add shortcut button (+)
   const addBtn = document.createElement("div");
   addBtn.className = "shortcut-item add-btn";
-  addBtn.innerHTML = `<div class="icon-box">${NEW_PLUS_ICON}</div><div class="label">Add shortcut</div>`;
+  addBtn.innerHTML = `
+    <div class="icon-box">
+      <div class="icon-ambient-glow" style="display:none;"></div>
+      ${NEW_PLUS_ICON}
+    </div>
+    <div class="label">Add shortcut</div>
+  `;
   addBtn.onclick = () => openModal(null);
   grid.appendChild(addBtn);
 }
@@ -238,10 +420,64 @@ function showToast(msg) {
   }, 2200);
 }
 
+/* ── Theme Color Helpers ─────────────────────────────── */
+function isColorLight(hex) {
+  if (!hex || typeof hex !== "string") return false;
+  let c = hex.replace(/^#/, "");
+  if (c.length === 3) c = c.split("").map(x => x + x).join("");
+  if (c.length !== 6) return false;
+  const r = parseInt(c.slice(0, 2), 16);
+  const g = parseInt(c.slice(2, 4), 16);
+  const b = parseInt(c.slice(4, 6), 16);
+  const [rs, gs, bs] = [r, g, b].map(v => {
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  const lum = 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  return lum > 0.45;
+}
+
+function applyThemeColor(color) {
+  if (!color || typeof color !== "string") color = "#121212";
+  if (!color.startsWith("#")) color = "#" + color;
+  if (color.length === 4) {
+    color = "#" + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
+  }
+  
+  const isLight = isColorLight(color);
+  
+  document.documentElement.style.setProperty("--bg-color", color);
+  
+  if (isLight) {
+    document.body.classList.add("light-mode");
+  } else {
+    document.body.classList.remove("light-mode");
+  }
+  
+  const picker = document.getElementById("theme-color-picker");
+  const hexLabel = document.getElementById("color-hex-label");
+  if (picker) picker.value = color;
+  if (hexLabel) hexLabel.textContent = color.toUpperCase();
+  
+  const favicon = document.querySelector("link[rel='icon']");
+  if (favicon) {
+    favicon.href = isLight ? "icons/favicon-light.png" : "icons/favicon-dark.svg";
+  }
+  
+  document.querySelectorAll(".color-preset-btn").forEach(btn => {
+    const btnColor = btn.dataset.color?.toLowerCase();
+    if (btnColor && btnColor === color.toLowerCase()) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+}
+
 /* ── Initialization ──────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
-  // Load shortcuts
-  chrome.storage.local.get(["myShortcuts", "bgHue", "bgNoise"], res => {
+  // Load shortcuts & settings
+  chrome.storage.local.get(["myShortcuts", "themeColor", "themeDark", "bgHue", "showQuote", "layout"], res => {
     shortcuts = res.myShortcuts || [
       { name: "Reddit",    url: "https://reddit.com" },
       { name: "Github",    url: "https://github.com" },
@@ -251,22 +487,29 @@ document.addEventListener("DOMContentLoaded", () => {
     renderShortcuts();
     
     // Apply Settings
-    const hue = res.bgHue !== undefined ? res.bgHue : 220;
-    const noise = res.bgNoise !== undefined ? res.bgNoise : true;
+    let themeColor = res.themeColor;
+    if (!themeColor) {
+      if (res.themeDark === false) {
+        themeColor = "#f8fafc";
+      } else {
+        themeColor = "#121212";
+      }
+    }
+    
     const showQuote = res.showQuote !== undefined ? res.showQuote : true;
-    const themeDark = res.themeDark !== undefined ? res.themeDark : true;
     const layout = res.layout !== undefined ? res.layout : "single";
     
-    document.documentElement.style.setProperty("--bg-hue", hue);
-    document.documentElement.style.setProperty("--bg-noise-opacity", noise ? (themeDark ? 0.05 : 0.12) : 0);
-    document.getElementById("hue-slider").value = hue;
-    document.getElementById("noise-toggle").checked = noise;
-    document.getElementById("quote-toggle").checked = showQuote;
-    document.getElementById("theme-toggle").checked = themeDark;
-    document.getElementById("layout-select").value = layout;
+    applyThemeColor(themeColor);
+    
+    const quoteToggle = document.getElementById("quote-toggle");
+    if (quoteToggle) quoteToggle.checked = showQuote;
 
-    if (!themeDark) document.body.classList.add("light-mode");
-    if (layout === "wrap") document.getElementById("shortcuts-grid").classList.add("multi-row");
+    const layoutSelect = document.getElementById("layout-select");
+    if (layoutSelect) layoutSelect.value = layout;
+
+    if (layout === "wrap") {
+      document.getElementById("shortcuts-grid")?.classList.add("multi-row");
+    }
   });
 
   renderRandomQuote();
@@ -289,29 +532,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document.getElementById("hue-slider")?.addEventListener("input", (e) => {
+  /* ── Theme Color Listeners ─────────────────────────── */
+  const colorPicker = document.getElementById("theme-color-picker");
+  const colorPickerControl = document.querySelector(".color-picker-control");
+  const customTrigger = document.getElementById("custom-color-trigger");
+
+  colorPicker?.addEventListener("input", (e) => {
     const val = e.target.value;
-    document.documentElement.style.setProperty("--bg-hue", val);
-    chrome.storage.local.set({ bgHue: val });
+    applyThemeColor(val);
   });
 
-  document.getElementById("noise-toggle")?.addEventListener("change", (e) => {
-    const val = e.target.checked;
-    document.documentElement.style.setProperty("--bg-noise-opacity", val ? 0.05 : 0);
-    chrome.storage.local.set({ bgNoise: val });
+  colorPicker?.addEventListener("change", (e) => {
+    const val = e.target.value;
+    applyThemeColor(val);
+    chrome.storage.local.set({ themeColor: val });
   });
 
-  document.getElementById("theme-toggle")?.addEventListener("change", (e) => {
-    const val = e.target.checked;
-    chrome.storage.local.set({ themeDark: val });
-    const noise = document.getElementById("noise-toggle").checked;
-    if (val) {
-      document.body.classList.remove("light-mode");
-      document.documentElement.style.setProperty("--bg-noise-opacity", noise ? 0.05 : 0);
-    } else {
-      document.body.classList.add("light-mode");
-      document.documentElement.style.setProperty("--bg-noise-opacity", noise ? 0.12 : 0);
+  colorPickerControl?.addEventListener("click", (e) => {
+    if (e.target !== colorPicker) {
+      colorPicker?.click();
     }
+  });
+
+  customTrigger?.addEventListener("click", () => {
+    colorPicker?.click();
+  });
+
+  document.querySelectorAll(".color-preset-btn[data-color]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const color = btn.dataset.color;
+      if (color) {
+        applyThemeColor(color);
+        chrome.storage.local.set({ themeColor: color });
+      }
+    });
   });
 
   document.getElementById("layout-select")?.addEventListener("change", (e) => {
